@@ -1,0 +1,12 @@
+.\objects\port.o: ..\Middleweares\FreeRTOS\portable\port.c
+.\objects\port.o: ..\Middleweares\FreeRTOS\include\FreeRTOS.h
+.\objects\port.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stddef.h
+.\objects\port.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdint.h
+.\objects\port.o: ..\Middleweares\FreeRTOS\include\FreeRTOSConfig.h
+.\objects\port.o: ..\Middleweares\FreeRTOS\include\projdefs.h
+.\objects\port.o: ..\Middleweares\FreeRTOS\include\portable.h
+.\objects\port.o: ..\Middleweares\FreeRTOS\include\deprecated_definitions.h
+.\objects\port.o: ..\Middleweares\FreeRTOS\portable\portmacro.h
+.\objects\port.o: ..\Middleweares\FreeRTOS\include\mpu_wrappers.h
+.\objects\port.o: ..\Middleweares\FreeRTOS\include\task.h
+.\objects\port.o: ..\Middleweares\FreeRTOS\include\list.h

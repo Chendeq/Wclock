@@ -1,0 +1,15 @@
+.\objects\lv_hal_tick.o: ..\Middleweares\LVGL\src\hal\lv_hal_tick.c
+.\objects\lv_hal_tick.o: ..\Middleweares\LVGL\src\hal\lv_hal_tick.h
+.\objects\lv_hal_tick.o: ..\Middleweares\LVGL\src\hal\../lv_conf_internal.h
+.\objects\lv_hal_tick.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdint.h
+.\objects\lv_hal_tick.o: ..\Middleweares\LVGL\src\hal\../lv_conf_kconfig.h
+.\objects\lv_hal_tick.o: ..\Middleweares\LVGL\examples\porting\../../lv_conf.h
+.\objects\lv_hal_tick.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdbool.h
+.\objects\lv_hal_tick.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stddef.h
+.\objects\lv_hal_tick.o: ..\Middleweares\FreeRTOS\include\FreeRTOS.h
+.\objects\lv_hal_tick.o: ..\Middleweares\FreeRTOS\include\FreeRTOSConfig.h
+.\objects\lv_hal_tick.o: ..\Middleweares\FreeRTOS\include\projdefs.h
+.\objects\lv_hal_tick.o: ..\Middleweares\FreeRTOS\include\portable.h
+.\objects\lv_hal_tick.o: ..\Middleweares\FreeRTOS\include\deprecated_definitions.h
+.\objects\lv_hal_tick.o: ..\Middleweares\FreeRTOS\portable\portmacro.h
+.\objects\lv_hal_tick.o: ..\Middleweares\FreeRTOS\include\mpu_wrappers.h

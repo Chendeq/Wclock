@@ -1,0 +1,628 @@
+version: "4.1"
+name: project
+type: ARM
+deviceName: null
+packDir: null
+srcDirs: []
+virtualFolder:
+  name: <virtual_root>
+  files: []
+  folders:
+    - name: StartUp
+      files:
+        - path: ../StartUp/include/core_cm4.h
+        - path: ../StartUp/include/core_cmFunc.h
+        - path: ../StartUp/include/core_cmInstr.h
+        - path: ../StartUp/include/core_cmSimd.h
+        - path: ../StartUp/include/startup_stm32f40_41xxx.s
+        - path: ../StartUp/include/system_stm32f4xx.c
+        - path: ../StartUp/include/system_stm32f4xx.h
+      folders: []
+    - name: Library
+      files: []
+      folders:
+        - name: inc
+          files:
+            - path: ../Library/inc/misc.h
+            - path: ../Library/inc/stm32f4xx_adc.h
+            - path: ../Library/inc/stm32f4xx_can.h
+            - path: ../Library/inc/stm32f4xx_cec.h
+            - path: ../Library/inc/stm32f4xx_crc.h
+            - path: ../Library/inc/stm32f4xx_cryp.h
+            - path: ../Library/inc/stm32f4xx_dac.h
+            - path: ../Library/inc/stm32f4xx_dbgmcu.h
+            - path: ../Library/inc/stm32f4xx_dcmi.h
+            - path: ../Library/inc/stm32f4xx_dfsdm.h
+            - path: ../Library/inc/stm32f4xx_dma.h
+            - path: ../Library/inc/stm32f4xx_dma2d.h
+            - path: ../Library/inc/stm32f4xx_dsi.h
+            - path: ../Library/inc/stm32f4xx_exti.h
+            - path: ../Library/inc/stm32f4xx_flash.h
+            - path: ../Library/inc/stm32f4xx_flash_ramfunc.h
+            - path: ../Library/inc/stm32f4xx_fmpi2c.h
+            - path: ../Library/inc/stm32f4xx_fsmc.h
+            - path: ../Library/inc/stm32f4xx_gpio.h
+            - path: ../Library/inc/stm32f4xx_hash.h
+            - path: ../Library/inc/stm32f4xx_i2c.h
+            - path: ../Library/inc/stm32f4xx_iwdg.h
+            - path: ../Library/inc/stm32f4xx_lptim.h
+            - path: ../Library/inc/stm32f4xx_ltdc.h
+            - path: ../Library/inc/stm32f4xx_pwr.h
+            - path: ../Library/inc/stm32f4xx_qspi.h
+            - path: ../Library/inc/stm32f4xx_rcc.h
+            - path: ../Library/inc/stm32f4xx_rng.h
+            - path: ../Library/inc/stm32f4xx_rtc.h
+            - path: ../Library/inc/stm32f4xx_sai.h
+            - path: ../Library/inc/stm32f4xx_sdio.h
+            - path: ../Library/inc/stm32f4xx_spdifrx.h
+            - path: ../Library/inc/stm32f4xx_spi.h
+            - path: ../Library/inc/stm32f4xx_syscfg.h
+            - path: ../Library/inc/stm32f4xx_tim.h
+            - path: ../Library/inc/stm32f4xx_usart.h
+            - path: ../Library/inc/stm32f4xx_wwdg.h
+          folders: []
+        - name: src
+          files:
+            - path: ../Library/src/misc.c
+            - path: ../Library/src/stm32f4xx_adc.c
+            - path: ../Library/src/stm32f4xx_can.c
+            - path: ../Library/src/stm32f4xx_cec.c
+            - path: ../Library/src/stm32f4xx_crc.c
+            - path: ../Library/src/stm32f4xx_cryp.c
+            - path: ../Library/src/stm32f4xx_cryp_aes.c
+            - path: ../Library/src/stm32f4xx_cryp_des.c
+            - path: ../Library/src/stm32f4xx_cryp_tdes.c
+            - path: ../Library/src/stm32f4xx_dac.c
+            - path: ../Library/src/stm32f4xx_dbgmcu.c
+            - path: ../Library/src/stm32f4xx_dcmi.c
+            - path: ../Library/src/stm32f4xx_dfsdm.c
+            - path: ../Library/src/stm32f4xx_dma.c
+            - path: ../Library/src/stm32f4xx_dma2d.c
+            - path: ../Library/src/stm32f4xx_dsi.c
+            - path: ../Library/src/stm32f4xx_exti.c
+            - path: ../Library/src/stm32f4xx_flash.c
+            - path: ../Library/src/stm32f4xx_flash_ramfunc.c
+            - path: ../Library/src/stm32f4xx_fmpi2c.c
+            - path: ../Library/src/stm32f4xx_fsmc.c
+            - path: ../Library/src/stm32f4xx_gpio.c
+            - path: ../Library/src/stm32f4xx_hash.c
+            - path: ../Library/src/stm32f4xx_hash_md5.c
+            - path: ../Library/src/stm32f4xx_hash_sha1.c
+            - path: ../Library/src/stm32f4xx_i2c.c
+            - path: ../Library/src/stm32f4xx_iwdg.c
+            - path: ../Library/src/stm32f4xx_lptim.c
+            - path: ../Library/src/stm32f4xx_ltdc.c
+            - path: ../Library/src/stm32f4xx_pwr.c
+            - path: ../Library/src/stm32f4xx_qspi.c
+            - path: ../Library/src/stm32f4xx_rcc.c
+            - path: ../Library/src/stm32f4xx_rng.c
+            - path: ../Library/src/stm32f4xx_rtc.c
+            - path: ../Library/src/stm32f4xx_sai.c
+            - path: ../Library/src/stm32f4xx_sdio.c
+            - path: ../Library/src/stm32f4xx_spdifrx.c
+            - path: ../Library/src/stm32f4xx_spi.c
+            - path: ../Library/src/stm32f4xx_syscfg.c
+            - path: ../Library/src/stm32f4xx_tim.c
+            - path: ../Library/src/stm32f4xx_usart.c
+            - path: ../Library/src/stm32f4xx_wwdg.c
+          folders: []
+    - name: APP
+      files: []
+      folders:
+        - name: app
+          files:
+            - path: ../APP/app/app.c
+            - path: ../APP/app/weather.c
+            - path: ../APP/app/wifi.c
+            - path: ../APP/app/rtos_task.c
+          folders: []
+        - name: GUI
+          files:
+            - path: ../APP/GUI/generated/events_init.c
+            - path: ../APP/GUI/generated/gui_guider.c
+            - path: ../APP/GUI/generated/setup_scr_alarm_screen.c
+            - path: ../APP/GUI/generated/setup_scr_alarm_set_screen.c
+            - path: ../APP/GUI/generated/setup_scr_calculate_screen.c
+            - path: ../APP/GUI/generated/setup_scr_calendar_screen.c
+            - path: ../APP/GUI/generated/setup_scr_main_screen.c
+            - path: ../APP/GUI/generated/setup_scr_peripheral_screen.c
+            - path: ../APP/GUI/generated/setup_scr_setting_screen.c
+            - path: ../APP/GUI/generated/setup_scr_software_screen.c
+            - path: ../APP/GUI/generated/setup_scr_weather_screen.c
+            - path: ../APP/GUI/generated/setup_scr_wifi_screen.c
+            - path: ../APP/GUI/generated/widgets_init.c
+            - path: ../APP/GUI/lv_mainstart.c
+          folders: []
+        - name: GUI_Font
+          files:
+            - path: ../APP/GUI_Font/lv_Font_7.c
+            - path: ../APP/GUI_Font/lv_Font_8.c
+            - path: ../APP/GUI_Font/lv_Font_10.c
+            - path: ../APP/GUI_Font/lv_Font_12.c
+            - path: ../APP/GUI_Font/lv_Font_14.c
+          folders: []
+    - name: Hardware
+      files:
+        - path: ../Hardware/24C02/24c02.c
+        - path: ../Hardware/IIC/iic.c
+        - path: ../Hardware/KEY/key.c
+        - path: ../Hardware/LCD/GUI.c
+        - path: ../Hardware/LCD/lcd.c
+        - path: ../Hardware/SD_CARD/tf.c
+        - path: ../Hardware/SPI/spi.c
+        - path: ../Hardware/SRAM/sram.c
+        - path: ../Hardware/TOUCH/touch.c
+        - path: ../Hardware/W25Q128/w25q128.c
+        - path: ../Hardware/LED/Led.c
+        - path: ../Hardware/SHT30/sht30.c
+        - path: ../Hardware/USART1/usart1.c
+        - path: ../Hardware/LIS2DH12TR/lis2dh12tr.c
+        - path: ../Hardware/BH1750/bh1750.c
+        - path: ../Hardware/SPL06/spl06.c
+        - path: ../Hardware/ESP_AT/esp_at.c
+        - path: ../Hardware/RTC/rtc.c
+        - path: ../Hardware/IIC/iic2_bus.c
+        - path: ../Hardware/ADC/adc.c
+      folders: []
+    - name: System
+      files:
+        - path: ../System/Delay/delay.c
+        - path: ../System/Sys/sys.c
+        - path: ../System/TIM3/Tim3.c
+      folders: []
+    - name: User
+      files:
+        - path: ../User/main.c
+        - path: ../User/stm32f4xx.h
+        - path: ../User/stm32f4xx_conf.h
+        - path: ../User/stm32f4xx_it.c
+        - path: ../User/stm32f4xx_it.h
+      folders: []
+    - name: FreeRTOS
+      files:
+        - path: ../Middleweares/FreeRTOS/portable/heap_4.c
+        - path: ../Middleweares/FreeRTOS/portable/port.c
+        - path: ../Middleweares/FreeRTOS/source/croutine.c
+        - path: ../Middleweares/FreeRTOS/source/event_groups.c
+        - path: ../Middleweares/FreeRTOS/source/list.c
+        - path: ../Middleweares/FreeRTOS/source/queue.c
+        - path: ../Middleweares/FreeRTOS/source/stream_buffer.c
+        - path: ../Middleweares/FreeRTOS/source/tasks.c
+        - path: ../Middleweares/FreeRTOS/source/timers.c
+      folders: []
+    - name: FATFS
+      files: []
+      folders:
+        - name: exfuns
+          files:
+            - path: ../Middleweares/FATFS/exfuns/exfuns.c
+            - path: ../Middleweares/FATFS/exfuns/myffunicode.c
+          folders: []
+        - name: source
+          files:
+            - path: ../Middleweares/FATFS/source/diskio.c
+            - path: ../Middleweares/FATFS/source/ff.c
+            - path: ../Middleweares/FATFS/source/ffsystem.c
+          folders: []
+    - name: MALLOC
+      files:
+        - path: ../Middleweares/MALLOC/malloc.c
+      folders: []
+    - name: FONTS
+      files:
+        - path: ../Middleweares/TEXT/fonts.c
+      folders: []
+    - name: LVGL
+      files: []
+      folders:
+        - name: core
+          files:
+            - path: ../Middleweares/LVGL/src/core/lv_disp.c
+            - path: ../Middleweares/LVGL/src/core/lv_event.c
+            - path: ../Middleweares/LVGL/src/core/lv_group.c
+            - path: ../Middleweares/LVGL/src/core/lv_indev.c
+            - path: ../Middleweares/LVGL/src/core/lv_indev_scroll.c
+            - path: ../Middleweares/LVGL/src/core/lv_obj.c
+            - path: ../Middleweares/LVGL/src/core/lv_obj_class.c
+            - path: ../Middleweares/LVGL/src/core/lv_obj_draw.c
+            - path: ../Middleweares/LVGL/src/core/lv_obj_pos.c
+            - path: ../Middleweares/LVGL/src/core/lv_obj_scroll.c
+            - path: ../Middleweares/LVGL/src/core/lv_obj_style.c
+            - path: ../Middleweares/LVGL/src/core/lv_obj_style_gen.c
+            - path: ../Middleweares/LVGL/src/core/lv_obj_tree.c
+            - path: ../Middleweares/LVGL/src/core/lv_refr.c
+            - path: ../Middleweares/LVGL/src/core/lv_theme.c
+          folders: []
+        - name: draw
+          files:
+            - path: ../Middleweares/LVGL/src/draw/arm2d/lv_gpu_arm2d.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/pxp/lv_draw_pxp.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/pxp/lv_draw_pxp_blend.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/pxp/lv_gpu_nxp_pxp.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/pxp/lv_gpu_nxp_pxp_osa.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/vglite/lv_draw_vglite.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/vglite/lv_draw_vglite_arc.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/vglite/lv_draw_vglite_blend.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/vglite/lv_draw_vglite_line.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/vglite/lv_draw_vglite_rect.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/vglite/lv_vglite_buf.c
+            - path: ../Middleweares/LVGL/src/draw/nxp/vglite/lv_vglite_utils.c
+            - path: ../Middleweares/LVGL/src/draw/renesas/lv_gpu_d2_draw_label.c
+            - path: ../Middleweares/LVGL/src/draw/renesas/lv_gpu_d2_ra6m3.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_arc.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_bg.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_composite.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_img.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_label.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_layer.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_line.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_mask.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_polygon.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_rect.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_stack_blur.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_texture_cache.c
+            - path: ../Middleweares/LVGL/src/draw/sdl/lv_draw_sdl_utils.c
+            - path: ../Middleweares/LVGL/src/draw/stm32_dma2d/lv_gpu_stm32_dma2d.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_arc.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_blend.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_dither.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_gradient.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_img.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_layer.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_letter.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_line.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_polygon.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_rect.c
+            - path: ../Middleweares/LVGL/src/draw/sw/lv_draw_sw_transform.c
+            - path: ../Middleweares/LVGL/src/draw/swm341_dma2d/lv_gpu_swm341_dma2d.c
+            - path: ../Middleweares/LVGL/src/draw/lv_draw.c
+            - path: ../Middleweares/LVGL/src/draw/lv_draw_arc.c
+            - path: ../Middleweares/LVGL/src/draw/lv_draw_img.c
+            - path: ../Middleweares/LVGL/src/draw/lv_draw_label.c
+            - path: ../Middleweares/LVGL/src/draw/lv_draw_layer.c
+            - path: ../Middleweares/LVGL/src/draw/lv_draw_line.c
+            - path: ../Middleweares/LVGL/src/draw/lv_draw_mask.c
+            - path: ../Middleweares/LVGL/src/draw/lv_draw_rect.c
+            - path: ../Middleweares/LVGL/src/draw/lv_draw_transform.c
+            - path: ../Middleweares/LVGL/src/draw/lv_draw_triangle.c
+            - path: ../Middleweares/LVGL/src/draw/lv_img_buf.c
+            - path: ../Middleweares/LVGL/src/draw/lv_img_cache.c
+            - path: ../Middleweares/LVGL/src/draw/lv_img_decoder.c
+          folders: []
+        - name: extra
+          files:
+            - path: ../Middleweares/LVGL/src/extra/layouts/flex/lv_flex.c
+            - path: ../Middleweares/LVGL/src/extra/layouts/grid/lv_grid.c
+            - path: ../Middleweares/LVGL/src/extra/libs/bmp/lv_bmp.c
+            - path: ../Middleweares/LVGL/src/extra/libs/ffmpeg/lv_ffmpeg.c
+            - path: ../Middleweares/LVGL/src/extra/libs/freetype/lv_freetype.c
+            - path: ../Middleweares/LVGL/src/extra/libs/fsdrv/lv_fs_fatfs.c
+            - path: ../Middleweares/LVGL/src/extra/libs/fsdrv/lv_fs_littlefs.c
+            - path: ../Middleweares/LVGL/src/extra/libs/fsdrv/lv_fs_posix.c
+            - path: ../Middleweares/LVGL/src/extra/libs/fsdrv/lv_fs_stdio.c
+            - path: ../Middleweares/LVGL/src/extra/libs/fsdrv/lv_fs_win32.c
+            - path: ../Middleweares/LVGL/src/extra/libs/gif/gifdec.c
+            - path: ../Middleweares/LVGL/src/extra/libs/gif/lv_gif.c
+            - path: ../Middleweares/LVGL/src/extra/libs/png/lodepng.c
+            - path: ../Middleweares/LVGL/src/extra/libs/png/lv_png.c
+            - path: ../Middleweares/LVGL/src/extra/libs/qrcode/lv_qrcode.c
+            - path: ../Middleweares/LVGL/src/extra/libs/qrcode/qrcodegen.c
+            - path: ../Middleweares/LVGL/src/extra/libs/rlottie/lv_rlottie.c
+            - path: ../Middleweares/LVGL/src/extra/libs/sjpg/lv_sjpg.c
+            - path: ../Middleweares/LVGL/src/extra/libs/sjpg/tjpgd.c
+            - path: ../Middleweares/LVGL/src/extra/libs/tiny_ttf/lv_tiny_ttf.c
+            - path: ../Middleweares/LVGL/src/extra/others/fragment/lv_fragment.c
+            - path: ../Middleweares/LVGL/src/extra/others/fragment/lv_fragment_manager.c
+            - path: ../Middleweares/LVGL/src/extra/others/gridnav/lv_gridnav.c
+            - path: ../Middleweares/LVGL/src/extra/others/ime/lv_ime_pinyin.c
+            - path: ../Middleweares/LVGL/src/extra/others/imgfont/lv_imgfont.c
+            - path: ../Middleweares/LVGL/src/extra/others/monkey/lv_monkey.c
+            - path: ../Middleweares/LVGL/src/extra/others/msg/lv_msg.c
+            - path: ../Middleweares/LVGL/src/extra/others/snapshot/lv_snapshot.c
+            - path: ../Middleweares/LVGL/src/extra/themes/basic/lv_theme_basic.c
+            - path: ../Middleweares/LVGL/src/extra/themes/default/lv_theme_default.c
+            - path: ../Middleweares/LVGL/src/extra/themes/mono/lv_theme_mono.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/animimg/lv_animimg.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/calendar/lv_calendar.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/calendar/lv_calendar_header_arrow.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/calendar/lv_calendar_header_dropdown.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/chart/lv_chart.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/colorwheel/lv_colorwheel.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/imgbtn/lv_imgbtn.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/keyboard/lv_keyboard.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/led/lv_led.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/list/lv_list.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/meter/lv_meter.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/menu/lv_menu.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/msgbox/lv_msgbox.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/span/lv_span.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/spinbox/lv_spinbox.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/spinner/lv_spinner.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/tabview/lv_tabview.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/tileview/lv_tileview.c
+            - path: ../Middleweares/LVGL/src/extra/widgets/win/lv_win.c
+            - path: ../Middleweares/LVGL/src/extra/lv_extra.c
+          folders: []
+        - name: font
+          files:
+            - path: ../Middleweares/LVGL/src/font/lv_font.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_dejavu_16_persian_hebrew.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_fmt_txt.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_loader.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_8.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_10.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_12.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_12_subpx.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_14.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_16.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_18.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_20.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_22.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_24.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_26.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_28.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_28_compressed.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_30.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_32.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_34.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_36.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_38.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_40.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_42.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_44.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_46.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_montserrat_48.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_simsun_16_cjk.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_unscii_8.c
+            - path: ../Middleweares/LVGL/src/font/lv_font_unscii_16.c
+          folders: []
+        - name: hal
+          files:
+            - path: ../Middleweares/LVGL/src/hal/lv_hal_disp.c
+            - path: ../Middleweares/LVGL/src/hal/lv_hal_indev.c
+            - path: ../Middleweares/LVGL/src/hal/lv_hal_tick.c
+          folders: []
+        - name: misc
+          files:
+            - path: ../Middleweares/LVGL/src/misc/lv_anim.c
+            - path: ../Middleweares/LVGL/src/misc/lv_anim_timeline.c
+            - path: ../Middleweares/LVGL/src/misc/lv_area.c
+            - path: ../Middleweares/LVGL/src/misc/lv_async.c
+            - path: ../Middleweares/LVGL/src/misc/lv_bidi.c
+            - path: ../Middleweares/LVGL/src/misc/lv_color.c
+            - path: ../Middleweares/LVGL/src/misc/lv_fs.c
+            - path: ../Middleweares/LVGL/src/misc/lv_gc.c
+            - path: ../Middleweares/LVGL/src/misc/lv_ll.c
+            - path: ../Middleweares/LVGL/src/misc/lv_log.c
+            - path: ../Middleweares/LVGL/src/misc/lv_lru.c
+            - path: ../Middleweares/LVGL/src/misc/lv_math.c
+            - path: ../Middleweares/LVGL/src/misc/lv_mem.c
+            - path: ../Middleweares/LVGL/src/misc/lv_printf.c
+            - path: ../Middleweares/LVGL/src/misc/lv_style.c
+            - path: ../Middleweares/LVGL/src/misc/lv_style_gen.c
+            - path: ../Middleweares/LVGL/src/misc/lv_templ.c
+            - path: ../Middleweares/LVGL/src/misc/lv_timer.c
+            - path: ../Middleweares/LVGL/src/misc/lv_tlsf.c
+            - path: ../Middleweares/LVGL/src/misc/lv_txt.c
+            - path: ../Middleweares/LVGL/src/misc/lv_txt_ap.c
+            - path: ../Middleweares/LVGL/src/misc/lv_utils.c
+          folders: []
+        - name: widgets
+          files:
+            - path: ../Middleweares/LVGL/src/widgets/lv_arc.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_bar.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_btn.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_btnmatrix.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_canvas.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_checkbox.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_dropdown.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_img.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_label.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_line.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_objx_templ.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_roller.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_slider.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_switch.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_table.c
+            - path: ../Middleweares/LVGL/src/widgets/lv_textarea.c
+          folders: []
+        - name: porting
+          files:
+            - path: ../Middleweares/LVGL/examples/porting/lv_port_disp.c
+            - path: ../Middleweares/LVGL/examples/porting/lv_port_fs.c
+            - path: ../Middleweares/LVGL/examples/porting/lv_port_indev.c
+          folders: []
+        - name: config
+          files:
+            - path: ../Middleweares/LVGL/lv_conf.h
+            - path: ../Middleweares/LVGL/lvgl.h
+          folders: []
+dependenceList: []
+outDir: build
+miscInfo:
+  uid: 96292c3aa1445a7bcb82c39d7897fc06
+targets:
+  Project:
+    cppPreprocessAttrs:
+      defineList:
+        - STM32F40_41xxx
+        - USE_STDPERIPH_DRIVER
+        - LV_LVGL_H_INCLUDE_SIMPLE
+      incList:
+        - ../Library/inc
+        - ../StartUp/include
+        - ../User
+        - ../System/delay
+        - ../System/sys
+        - ../System/TIM3
+        - ../Middleweares
+        - ../Middleweares/LVGL/examples/porting
+        - ../Middleweares/LVGL/src
+        - ../Middleweares/LVGL
+        - ../Middleweares/FreeRTOS
+        - ../Middleweares/FreeRTOS/include
+        - ../Middleweares/FreeRTOS/portable
+        - ../Middleweares/FATFS
+        - ../Middleweares/FATFS/exfuns
+        - ../Middleweares/FATFS/source
+        - ../Middleweares/MALLOC
+        - ../Middleweares/TEXT
+        - ../Hardware
+        - ../Hardware/24C02
+        - ../Hardware/IIC
+        - ../Hardware/KEY
+        - ../Hardware/LCD
+        - ../Hardware/LED
+        - ../Hardware/SD_CARD
+        - ../Hardware/SPI
+        - ../Hardware/SRAM
+        - ../Hardware/TOUCH
+        - ../Hardware/USART1
+        - ../Hardware/W25Q128
+        - ../Hardware/LIS2DH12TR
+        - ../Hardware/SHT30
+        - ../Hardware/BH1750
+        - ../Hardware/SPL06
+        - ../Hardware/ESP_AT
+        - ../Hardware/RTC
+        - ../Hardware/ADC
+        - ../APP
+        - ../APP/GUI
+        - ../APP/GUI_Font
+        - ../APP/GUI/generated
+        - ../APP/GUI/custom
+        - ../APP/app
+        - .cmsis/include
+        - RTE/_Project
+      libList: []
+    excludeList: []
+    settings:
+      debugger: cortex-debug
+    toolchain: AC5
+    toolchainConfigMap:
+      AC5:
+        archExtensions: ""
+        cpuType: Cortex-M4
+        floatingPointHardware: single
+        options:
+          version: 4
+          afterBuildTasks: []
+          asm-compiler:
+            defines: []
+          beforeBuildTasks: []
+          c/cpp-compiler:
+            CXX_FLAGS: --locale=english --multibyte_chars
+            C_FLAGS: --locale=english --multibyte_chars
+            c99-mode: true
+            gnu-extensions: true
+            one-elf-section-per-function: true
+            optimization: level-0
+            warnings: no-warnings
+          global:
+            output-debug-info: enable
+            use-microLIB: false
+          linker:
+            $outputTaskExcludes:
+              - .bin
+            output-format: elf
+            ro-base: "0x08000000"
+            rw-base: "0x20000000"
+            xo-base: ""
+        scatterFilePath: ""
+        storageLayout:
+          RAM:
+            - id: 1
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 2
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 3
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 1
+              isChecked: true
+              mem:
+                size: "0x20000"
+                startAddr: "0x20000000"
+              noInit: false
+              tag: IRAM
+            - id: 2
+              isChecked: false
+              mem:
+                size: "0x10000"
+                startAddr: "0x10000000"
+              noInit: false
+              tag: IRAM
+          ROM:
+            - id: 1
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 2
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 3
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 1
+              isChecked: true
+              isStartup: true
+              mem:
+                size: "0x100000"
+                startAddr: "0x8000000"
+              tag: IROM
+            - id: 2
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: IROM
+        useCustomScatterFile: false
+    uploadConfigMap:
+      JLink:
+        baseAddr: ""
+        bin: ""
+        cpuInfo:
+          cpuName: "null"
+          vendor: "null"
+        otherCmds: ""
+        proType: 1
+        speed: 8000
+      STLink:
+        address: "0x8000000"
+        bin: ""
+        elFile: None
+        optionBytes: .eide/project.st.option.bytes.ini
+        otherCmds: ""
+        proType: SWD
+        resetMode: default
+        runAfterProgram: true
+        speed: 4000
+    uploader: STLink

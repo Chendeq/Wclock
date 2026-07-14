@@ -1,0 +1,14 @@
+.\objects\heap_4.o: ..\Middleweares\FreeRTOS\portable\heap_4.c
+.\objects\heap_4.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdlib.h
+.\objects\heap_4.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\string.h
+.\objects\heap_4.o: ..\Middleweares\FreeRTOS\include\FreeRTOS.h
+.\objects\heap_4.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stddef.h
+.\objects\heap_4.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdint.h
+.\objects\heap_4.o: ..\Middleweares\FreeRTOS\include\FreeRTOSConfig.h
+.\objects\heap_4.o: ..\Middleweares\FreeRTOS\include\projdefs.h
+.\objects\heap_4.o: ..\Middleweares\FreeRTOS\include\portable.h
+.\objects\heap_4.o: ..\Middleweares\FreeRTOS\include\deprecated_definitions.h
+.\objects\heap_4.o: ..\Middleweares\FreeRTOS\portable\portmacro.h
+.\objects\heap_4.o: ..\Middleweares\FreeRTOS\include\mpu_wrappers.h
+.\objects\heap_4.o: ..\Middleweares\FreeRTOS\include\task.h
+.\objects\heap_4.o: ..\Middleweares\FreeRTOS\include\list.h

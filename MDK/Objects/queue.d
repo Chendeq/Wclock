@@ -1,0 +1,15 @@
+.\objects\queue.o: ..\Middleweares\FreeRTOS\source\queue.c
+.\objects\queue.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdlib.h
+.\objects\queue.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\string.h
+.\objects\queue.o: ..\Middleweares\FreeRTOS\include\FreeRTOS.h
+.\objects\queue.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stddef.h
+.\objects\queue.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdint.h
+.\objects\queue.o: ..\Middleweares\FreeRTOS\include\FreeRTOSConfig.h
+.\objects\queue.o: ..\Middleweares\FreeRTOS\include\projdefs.h
+.\objects\queue.o: ..\Middleweares\FreeRTOS\include\portable.h
+.\objects\queue.o: ..\Middleweares\FreeRTOS\include\deprecated_definitions.h
+.\objects\queue.o: ..\Middleweares\FreeRTOS\portable\portmacro.h
+.\objects\queue.o: ..\Middleweares\FreeRTOS\include\mpu_wrappers.h
+.\objects\queue.o: ..\Middleweares\FreeRTOS\include\task.h
+.\objects\queue.o: ..\Middleweares\FreeRTOS\include\list.h
+.\objects\queue.o: ..\Middleweares\FreeRTOS\include\queue.h

@@ -1,0 +1,55 @@
+AT+CWINIT：初始化/清理 Wi-Fi 驱动程序
+
+AT+CWMODE：查询/设置 Wi-Fi 模式 (Station/SoftAP/Station+SoftAP)
+
+AT+CWBANDWIDTH：查询/设置 Wi-Fi 带宽
+
+AT+CWSTATE：查询 Wi-Fi 状态和 Wi-Fi 信息
+
+AT+CWCONFIG：查询/设置 Wi-Fi 非活动时间和监听间隔时间
+
+AT+CWJAP：连接 AP
+
+AT+CWRECONNCFG：查询/设置 Wi-Fi 重连配置
+
+AT+CWLAPOPT：设置 AT+CWLAP 命令扫描结果的属性
+
+AT+CWLAP：扫描当前可用的 AP
+
+AT+CWQAP：断开与 AP 的连接
+
+AT+CWSAP：配置 ESP32-C3 SoftAP 参数
+
+AT+CWLIF：查询连接到 ESP32-C3 SoftAP 的 station 信息
+
+AT+CWQIF：断开 station 与 ESP32-C3 SoftAP 的连接
+
+AT+CWDHCP：启用或禁用 DHCP
+
+AT+CWDHCPS：查询/设置 ESP32-C3 SoftAP DHCP 分配的 IPv4 地址范围
+
+AT+CWAUTOCONN：上电是否自动连接 AP
+
+AT+CWAPPROTO：查询/设置 SoftAP 模式下 Wi-Fi 协议标准
+
+AT+CWSTAPROTO：查询/设置 Station 模式下 Wi-Fi 协议标准
+
+AT+CIPSTAMAC：查询/设置 ESP32-C3 Station 的 MAC 地址
+
+AT+CIPAPMAC：查询/设置 ESP32-C3 SoftAP 的 MAC 地址
+
+AT+CIPSTA：查询/设置 ESP32-C3 Station 的 IP 地址
+
+AT+CIPAP：查询/设置 ESP32-C3 SoftAP 的 IP 地址
+
+AT+CWSTARTSMART：开启 SmartConfig
+
+AT+CWSTOPSMART：停止 SmartConfig
+
+AT+WPS：设置 WPS 功能
+
+AT+CWJEAP：连接 WPA2/WPA3 企业版 AP
+
+AT+CWHOSTNAME：查询/设置 ESP32-C3 Station 的主机名称
+
+AT+CWCOUNTRY：查询/设置 Wi-Fi 国家代码
