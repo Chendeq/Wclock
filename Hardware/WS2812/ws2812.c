@@ -1,33 +1,33 @@
 #include "ws2812.h"
 
-#define WS2812_GPIO_PORT               GPIOB
-#define WS2812_GPIO_PIN                GPIO_Pin_5
-#define WS2812_GPIO_PIN_SOURCE         GPIO_PinSource5
-#define WS2812_GPIO_CLK                RCC_AHB1Periph_GPIOB
-#define WS2812_GPIO_AF                 GPIO_AF_TIM3
+#define WS2812_GPIO_PORT GPIOB
+#define WS2812_GPIO_PIN GPIO_Pin_5
+#define WS2812_GPIO_PIN_SOURCE GPIO_PinSource5
+#define WS2812_GPIO_CLK RCC_AHB1Periph_GPIOB
+#define WS2812_GPIO_AF GPIO_AF_TIM3
 
-#define WS2812_TIM                     TIM3
-#define WS2812_TIM_CLK                 RCC_APB1Periph_TIM3
-#define WS2812_TIM_DMA_REQ             TIM_DMA_CC2
-#define WS2812_TIM_CCR_ADDR            ((uint32_t)&TIM3->CCR2)
+#define WS2812_TIM TIM3
+#define WS2812_TIM_CLK RCC_APB1Periph_TIM3
+#define WS2812_TIM_DMA_REQ TIM_DMA_CC2
+#define WS2812_TIM_CCR_ADDR ((uint32_t)&TIM3->CCR2)
 
-#define WS2812_DMA_CLK                 RCC_AHB1Periph_DMA1
-#define WS2812_DMA_STREAM              DMA1_Stream5
-#define WS2812_DMA_CHANNEL             DMA_Channel_5
-#define WS2812_DMA_FLAG_TC             DMA_FLAG_TCIF5
-#define WS2812_DMA_FLAG_TE             DMA_FLAG_TEIF5
-#define WS2812_DMA_FLAG_DME            DMA_FLAG_DMEIF5
-#define WS2812_DMA_FLAG_FE             DMA_FLAG_FEIF5
-#define WS2812_DMA_FLAG_HT             DMA_FLAG_HTIF5
-#define WS2812_DMA_ALL_FLAGS           (WS2812_DMA_FLAG_TC | WS2812_DMA_FLAG_TE | \
-                                        WS2812_DMA_FLAG_DME | WS2812_DMA_FLAG_FE | \
-                                        WS2812_DMA_FLAG_HT)
+#define WS2812_DMA_CLK RCC_AHB1Periph_DMA1
+#define WS2812_DMA_STREAM DMA1_Stream5
+#define WS2812_DMA_CHANNEL DMA_Channel_5
+#define WS2812_DMA_FLAG_TC DMA_FLAG_TCIF5
+#define WS2812_DMA_FLAG_TE DMA_FLAG_TEIF5
+#define WS2812_DMA_FLAG_DME DMA_FLAG_DMEIF5
+#define WS2812_DMA_FLAG_FE DMA_FLAG_FEIF5
+#define WS2812_DMA_FLAG_HT DMA_FLAG_HTIF5
+#define WS2812_DMA_ALL_FLAGS (WS2812_DMA_FLAG_TC | WS2812_DMA_FLAG_TE |  \
+                              WS2812_DMA_FLAG_DME | WS2812_DMA_FLAG_FE | \
+                              WS2812_DMA_FLAG_HT)
 
-#define WS2812_PWM_FREQ_HZ             800000U
-#define WS2812_RESET_US                80U
-#define WS2812_BITS_PER_LED            24U
-#define WS2812_RESET_SLOTS             ((WS2812_PWM_FREQ_HZ * WS2812_RESET_US) / 1000000U)
-#define WS2812_PWM_BUF_LEN             ((WS2812_LED_NUM * WS2812_BITS_PER_LED) + WS2812_RESET_SLOTS)
+#define WS2812_PWM_FREQ_HZ 800000U
+#define WS2812_RESET_US 80U
+#define WS2812_BITS_PER_LED 24U
+#define WS2812_RESET_SLOTS ((WS2812_PWM_FREQ_HZ * WS2812_RESET_US) / 1000000U)
+#define WS2812_PWM_BUF_LEN ((WS2812_LED_NUM * WS2812_BITS_PER_LED) + WS2812_RESET_SLOTS)
 
 static uint8_t ws2812_pixel_buf[WS2812_LED_NUM][3];
 static uint16_t ws2812_pwm_buf[WS2812_PWM_BUF_LEN];
