@@ -11,9 +11,9 @@
 #include "spl06.h"
 #include "iic2_bus.h"
 #include "adc.h"
-// #include "led.h"
 #include "wifi.h"
 #include "weather.h"
+#include "ws2812.h"
 
 #define SENSOR_TASK_PERIOD_MS               200U
 #define SENSOR_BATTERY_SAMPLE_INTERVAL_MS   (5U * 60U * 1000U)
@@ -22,7 +22,6 @@
 lv_ui guider_ui;
 
 static TaskHandle_t lvglTask_handler;
-// static TaskHandle_t ledTask_handler;
 static TaskHandle_t sensorTask_handler;
 static TaskHandle_t wifiTask_handler;
 
@@ -102,6 +101,7 @@ static void sensor_task(void *pvParameters)
 {
     uint32_t tick = 0;
     uint32_t battery_tick = SENSOR_BATTERY_SAMPLE_TICKS;
+    uint8_t ws2812_step = 0U;
     sht30_data_t sht30_data;
 
     (void)pvParameters;
@@ -111,6 +111,7 @@ static void sensor_task(void *pvParameters)
     BH1750_Init();
     SHT30_Init();
     SPL06_Init();
+    WS2812_Init();
 
     while (1)
     {
@@ -140,6 +141,27 @@ static void sensor_task(void *pvParameters)
 
             float pressure = SPL06_ReadPressure();
             app_sensor_update_spl06(pressure, (pressure > 0.0f) ? 1U : 0U);
+        }
+
+        if ((tick % 5U) == 0U)
+        {
+            switch (ws2812_step)
+            {
+                case 0:
+                    WS2812_FillRGB(64U, 0U, 0U);
+                    break;
+
+                case 1:
+                    WS2812_FillRGB(0U, 64U, 0U);
+                    break;
+
+                default:
+                    WS2812_FillRGB(0U, 0U, 64U);
+                    break;
+            }
+
+            WS2812_Refresh();
+            ws2812_step = (uint8_t)((ws2812_step + 1U) % 3U);
         }
 
         tick++;

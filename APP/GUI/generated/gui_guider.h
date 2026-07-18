@@ -61,6 +61,14 @@ typedef struct
 	lv_obj_t *main_screen_auto_light_sw;
 	lv_obj_t *main_screen_battery_img;
 	lv_obj_t *main_screen_battery_label;
+	lv_obj_t *main_screen_ararm_cont;
+	lv_obj_t *main_screen_ararm_cancel_imgbtn;
+	lv_obj_t *main_screen_ararm_cancel_imgbtn_label;
+	lv_obj_t *main_screen_alarm_img;
+	lv_obj_t *main_screen_alarm_label;
+	lv_obj_t *main_screen_buzzer_label;
+	lv_obj_t *main_screen_close_btn;
+	lv_obj_t *main_screen_close_btn_label;
 	lv_obj_t *setting_screen;
 	bool setting_screen_del;
 	lv_obj_t *setting_screen_cont_1;

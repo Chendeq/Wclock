@@ -117,7 +117,7 @@ void setup_scr_alarm_set_screen(lv_ui *ui)
     lv_obj_set_style_bg_color(ui->alarm_set_screen_minute_roller_1, lv_color_hex(0xffffff), LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_bg_grad_dir(ui->alarm_set_screen_minute_roller_1, LV_GRAD_DIR_NONE, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(ui->alarm_set_screen_minute_roller_1, lv_color_hex(0x333333), LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui->alarm_set_screen_minute_roller_1, &lv_Font_10, LV_PART_MAIN|LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui->alarm_set_screen_minute_roller_1, &lv_Font_8, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui->alarm_set_screen_minute_roller_1, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui->alarm_set_screen_minute_roller_1, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui->alarm_set_screen_minute_roller_1, 2, LV_PART_MAIN|LV_STATE_DEFAULT);
@@ -142,7 +142,7 @@ void setup_scr_alarm_set_screen(lv_ui *ui)
     lv_label_set_text(ui->alarm_set_screen_alarm_set_label, "闹钟设置");
     lv_label_set_long_mode(ui->alarm_set_screen_alarm_set_label, LV_LABEL_LONG_WRAP);
     lv_obj_set_pos(ui->alarm_set_screen_alarm_set_label, 5, 5);
-    lv_obj_set_size(ui->alarm_set_screen_alarm_set_label, 65, 15);
+    lv_obj_set_size(ui->alarm_set_screen_alarm_set_label, 75, 15);
 
     //Write style for alarm_set_screen_alarm_set_label, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
     lv_obj_set_style_border_width(ui->alarm_set_screen_alarm_set_label, 0, LV_PART_MAIN|LV_STATE_DEFAULT);

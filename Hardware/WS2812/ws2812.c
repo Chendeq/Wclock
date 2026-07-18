@@ -5,6 +5,7 @@
 #define WS2812_GPIO_PIN_SOURCE GPIO_PinSource5
 #define WS2812_GPIO_CLK RCC_AHB1Periph_GPIOB
 #define WS2812_GPIO_AF GPIO_AF_TIM3
+#define WS2812_GPIO_SPI_AF GPIO_AF_SPI1
 
 #define WS2812_TIM TIM3
 #define WS2812_TIM_CLK RCC_APB1Periph_TIM3
@@ -28,6 +29,7 @@
 #define WS2812_BITS_PER_LED 24U
 #define WS2812_RESET_SLOTS ((WS2812_PWM_FREQ_HZ * WS2812_RESET_US) / 1000000U)
 #define WS2812_PWM_BUF_LEN ((WS2812_LED_NUM * WS2812_BITS_PER_LED) + WS2812_RESET_SLOTS)
+#define WS2812_DMA_WAIT_TIMEOUT 1000000U
 
 static uint8_t ws2812_pixel_buf[WS2812_LED_NUM][3];
 static uint16_t ws2812_pwm_buf[WS2812_PWM_BUF_LEN];
@@ -67,6 +69,21 @@ static void ws2812_gpio_init(void)
     GPIO_Init(WS2812_GPIO_PORT, &gpio_init);
 
     GPIO_PinAFConfig(WS2812_GPIO_PORT, WS2812_GPIO_PIN_SOURCE, WS2812_GPIO_AF);
+}
+
+static void ws2812_gpio_restore_spi1_mosi(void)
+{
+    GPIO_InitTypeDef gpio_init;
+
+    GPIO_StructInit(&gpio_init);
+    gpio_init.GPIO_Pin = WS2812_GPIO_PIN;
+    gpio_init.GPIO_Mode = GPIO_Mode_AF;
+    gpio_init.GPIO_OType = GPIO_OType_PP;
+    gpio_init.GPIO_PuPd = GPIO_PuPd_UP;
+    gpio_init.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_Init(WS2812_GPIO_PORT, &gpio_init);
+
+    GPIO_PinAFConfig(WS2812_GPIO_PORT, WS2812_GPIO_PIN_SOURCE, WS2812_GPIO_SPI_AF);
 }
 
 static void ws2812_tim3_pwm_init(void)
@@ -180,11 +197,10 @@ static void ws2812_encode_pixels(void)
 
 void WS2812_Init(void)
 {
-    ws2812_gpio_init();
     ws2812_tim3_pwm_init();
     ws2812_dma_init();
     WS2812_Clear();
-    WS2812_Refresh();
+    ws2812_gpio_restore_spi1_mosi();
 }
 
 void WS2812_SetPixelRGB(uint16_t index, uint8_t red, uint8_t green, uint8_t blue)
@@ -236,6 +252,8 @@ void WS2812_Clear(void)
 
 void WS2812_Refresh(void)
 {
+    uint32_t timeout = WS2812_DMA_WAIT_TIMEOUT;
+
     if (ws2812_is_busy != 0U)
     {
         return;
@@ -243,6 +261,8 @@ void WS2812_Refresh(void)
 
     ws2812_is_busy = 1U;
     ws2812_encode_pixels();
+    __disable_irq();
+    ws2812_gpio_init();
 
     DMA_Cmd(WS2812_DMA_STREAM, DISABLE);
     while (DMA_GetCmdStatus(WS2812_DMA_STREAM) != DISABLE)
@@ -258,15 +278,17 @@ void WS2812_Refresh(void)
     DMA_Cmd(WS2812_DMA_STREAM, ENABLE);
     TIM_Cmd(WS2812_TIM, ENABLE);
 
-    while (DMA_GetFlagStatus(WS2812_DMA_STREAM, WS2812_DMA_FLAG_TC) == RESET)
+    while ((DMA_GetFlagStatus(WS2812_DMA_STREAM, WS2812_DMA_FLAG_TC) == RESET) && (timeout > 0U))
     {
+        timeout--;
     }
 
     TIM_Cmd(WS2812_TIM, DISABLE);
     DMA_Cmd(WS2812_DMA_STREAM, DISABLE);
     DMA_ClearFlag(WS2812_DMA_STREAM, WS2812_DMA_ALL_FLAGS);
     TIM_SetCompare2(WS2812_TIM, 0U);
-    GPIO_ResetBits(WS2812_GPIO_PORT, WS2812_GPIO_PIN);
+    ws2812_gpio_restore_spi1_mosi();
+    __enable_irq();
 
     ws2812_is_busy = 0U;
 }
