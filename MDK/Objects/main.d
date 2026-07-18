@@ -40,7 +40,6 @@
 .\objects\main.o: ..\Hardware\LCD\gui.h
 .\objects\main.o: ..\Hardware\TOUCH\touch.h
 .\objects\main.o: ..\Middleweares\TEXT\fonts.h
-.\objects\main.o: ..\Hardware\LED\led.h
 .\objects\main.o: ..\Hardware\KEY\key.h
 .\objects\main.o: ..\System\delay\delay.h
 .\objects\main.o: ..\Hardware\SD_CARD\tf.h

@@ -132,6 +132,7 @@
 .\objects\app.o: ..\Middleweares\LVGL\src\../src/extra/widgets/led/lv_led.h
 .\objects\app.o: ..\Middleweares\LVGL\src\../src/extra/widgets/imgbtn/lv_imgbtn.h
 .\objects\app.o: ..\Middleweares\LVGL\src\../src/extra/widgets/span/lv_span.h
+.\objects\app.o: ..\APP\app\weather.h
 .\objects\app.o: ..\Middleweares\FreeRTOS\include\FreeRTOS.h
 .\objects\app.o: ..\Middleweares\FreeRTOS\include\FreeRTOSConfig.h
 .\objects\app.o: ..\Middleweares\FreeRTOS\include\projdefs.h
@@ -180,3 +181,7 @@
 .\objects\app.o: ..\Library\inc\stm32f4xx_dcmi.h
 .\objects\app.o: ..\Library\inc\stm32f4xx_fsmc.h
 .\objects\app.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdlib.h
+.\objects\app.o: ..\Hardware\RTC\rtc.h
+.\objects\app.o: ..\Hardware\ESP_AT\esp_at.h
+.\objects\app.o: ..\APP\app\wifi.h
+.\objects\app.o: ..\APP\GUI\generated\widgets_init.h

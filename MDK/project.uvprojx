@@ -341,7 +341,7 @@
               <MiscControls>--locale=english --multibyte_chars</MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,LV_LVGL_H_INCLUDE_SIMPLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Library\inc;..\StartUp\include;..\User;..\System\delay;..\System\sys;..\System\TIM3;..\Middleweares;..\Middleweares\LVGL\examples\porting;..\Middleweares\LVGL\src;..\Middleweares\LVGL;..\Middleweares\FreeRTOS;..\Middleweares\FreeRTOS\include;..\Middleweares\FreeRTOS\portable;..\Middleweares\FATFS;..\Middleweares\FATFS\exfuns;..\Middleweares\FATFS\source;..\Middleweares\MALLOC;..\Middleweares\TEXT;..\Hardware;..\Hardware\24C02;..\Hardware\IIC;..\Hardware\KEY;..\Hardware\LCD;..\Hardware\LED;..\Hardware\SD_CARD;..\Hardware\SPI;..\Hardware\SRAM;..\Hardware\TOUCH;..\Hardware\USART1;..\Hardware\W25Q128;..\Hardware\LIS2DH12TR;..\Hardware\SHT30;..\Hardware\BH1750;..\Hardware\SPL06;..\Hardware\ESP_AT;..\Hardware\RTC;..\Hardware\ADC;..\APP;..\APP\GUI;..\APP\GUI_Font;..\APP\GUI\generated;..\APP\GUI\custom;..\APP\app</IncludePath>
+              <IncludePath>..\Library\inc;..\StartUp\include;..\User;..\System\delay;..\System\sys;..\System\TIM3;..\Middleweares;..\Middleweares\LVGL\examples\porting;..\Middleweares\LVGL\src;..\Middleweares\LVGL;..\Middleweares\FreeRTOS;..\Middleweares\FreeRTOS\include;..\Middleweares\FreeRTOS\portable;..\Middleweares\FATFS;..\Middleweares\FATFS\exfuns;..\Middleweares\FATFS\source;..\Middleweares\MALLOC;..\Middleweares\TEXT;..\Hardware;..\Hardware\24C02;..\Hardware\IIC;..\Hardware\KEY;..\Hardware\LCD;..\Hardware\LED;..\Hardware\SD_CARD;..\Hardware\SPI;..\Hardware\SRAM;..\Hardware\TOUCH;..\Hardware\USART1;..\Hardware\W25Q128;..\Hardware\LIS2DH12TR;..\Hardware\SHT30;..\Hardware\BH1750;..\Hardware\SPL06;..\Hardware\ESP_AT;..\Hardware\RTC;..\Hardware\ADC;..\Hardware\WS2812;..\Hardware\BEEP;..\APP;..\APP\GUI;..\APP\GUI_Font;..\APP\GUI\generated;..\APP\GUI\custom;..\APP\app</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1059,6 +1059,16 @@
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Hardware\ADC\adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>ws2812.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\WS2812\ws2812.c</FilePath>
+            </File>
+            <File>
+              <FileName>beep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\BEEP\beep.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -133,6 +133,7 @@
 .\objects\rtos_task.o: ..\Middleweares\LVGL\src\../src/extra/widgets/led/lv_led.h
 .\objects\rtos_task.o: ..\Middleweares\LVGL\src\../src/extra/widgets/imgbtn/lv_imgbtn.h
 .\objects\rtos_task.o: ..\Middleweares\LVGL\src\../src/extra/widgets/span/lv_span.h
+.\objects\rtos_task.o: ..\APP\app\weather.h
 .\objects\rtos_task.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdio.h
 .\objects\rtos_task.o: ..\Middleweares\FreeRTOS\include\FreeRTOS.h
 .\objects\rtos_task.o: ..\Middleweares\FreeRTOS\include\FreeRTOSConfig.h
@@ -186,4 +187,5 @@
 .\objects\rtos_task.o: ..\Hardware\SPL06\spl06.h
 .\objects\rtos_task.o: ..\Hardware\IIC\iic2_bus.h
 .\objects\rtos_task.o: ..\Hardware\ADC\adc.h
-.\objects\rtos_task.o: ..\Hardware\LED\led.h
+.\objects\rtos_task.o: ..\APP\app\wifi.h
+.\objects\rtos_task.o: ..\Hardware\WS2812\ws2812.h

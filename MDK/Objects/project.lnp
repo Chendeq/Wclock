@@ -86,6 +86,8 @@
 ".\objects\rtc.o"
 ".\objects\iic2_bus.o"
 ".\objects\adc.o"
+".\objects\ws2812.o"
+".\objects\beep.o"
 ".\objects\delay.o"
 ".\objects\sys.o"
 ".\objects\tim3.o"

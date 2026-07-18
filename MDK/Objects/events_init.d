@@ -171,3 +171,5 @@
 .\objects\events_init.o: ..\Library\inc\stm32f4xx_fsmc.h
 .\objects\events_init.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdlib.h
 .\objects\events_init.o: ..\APP\app\app.h
+.\objects\events_init.o: ..\APP\app\weather.h
+.\objects\events_init.o: ..\APP\app\wifi.h

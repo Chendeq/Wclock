@@ -3,7 +3,6 @@
 #include "gui.h"
 #include "touch.h"
 #include "fonts.h"
-// #include "led.h"
 #include "key.h"
 #include "delay.h"
 #include "tf.h"
@@ -15,6 +14,7 @@
 #include "malloc.h"
 #include "rtos_task.h"
 #include "usart1.h"
+#include "beep.h"
 
 #include "lvgl.h"
 #include "lv_port_disp.h"
@@ -26,9 +26,9 @@ int main(void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//中断分组
 	delay_init(168);     //延时初始化
 	
-	// LED_Init();
 	Key_Init();
 	USART1_Init();
+	Beep_Init();
 	AT24CXX_Init();
 	my_mem_init(SRAMIN);
 	norflash_init();
