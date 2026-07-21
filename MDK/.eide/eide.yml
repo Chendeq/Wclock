@@ -163,7 +163,6 @@ virtualFolder:
         - path: ../Hardware/RTC/rtc.c
         - path: ../Hardware/IIC/iic2_bus.c
         - path: ../Hardware/ADC/adc.c
-        - path: ../Hardware/WS2812/ws2812.c
         - path: ../Hardware/BEEP/beep.c
       folders: []
     - name: System
@@ -490,7 +489,6 @@ targets:
         - ../Hardware/ESP_AT
         - ../Hardware/RTC
         - ../Hardware/ADC
-        - ../Hardware/WS2812
         - ../APP
         - ../APP/GUI
         - ../APP/GUI_Font

@@ -10,10 +10,16 @@
 #define BATT_DET_GPIO_CLK           RCC_AHB1Periph_GPIOC
 
 #define ADC_BATT_SAMPLE_COUNT       8U
+#define ADC_BATT_DUMMY_COUNT        2U
 #define ADC_REFERENCE_MV            3300U
 #define ADC_RESOLUTION_MAX          4095U
 #define ADC_BATT_R_TOP_OHM          30000U
 #define ADC_BATT_R_BOTTOM_OHM       15000U
+#define ADC_BATT_DIVIDER_NUM        (ADC_BATT_R_TOP_OHM + ADC_BATT_R_BOTTOM_OHM)
+#define ADC_BATT_DIVIDER_DEN        ADC_BATT_R_BOTTOM_OHM
+
+static uint16_t adc_battery_last_raw;
+static uint16_t adc_battery_last_voltage_mv;
 
 static void adc_battery_switch(uint8_t enable)
 {
@@ -31,7 +37,7 @@ static void adc_battery_settle_delay(void)
 {
     volatile uint32_t i;
 
-    for (i = 0; i < 120000U; i++)
+    for (i = 0; i < 300000U; i++)
     {
         __NOP();
     }
@@ -89,17 +95,20 @@ uint16_t ADC_Battery_ReadRaw(void)
     adc_battery_switch(1U);
     adc_battery_settle_delay();
 
-    ADC_RegularChannelConfig(ADC1, ADC_BATT_CHANNEL, 1, ADC_SampleTime_144Cycles);
-    ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
-    ADC_SoftwareStartConv(ADC1);
-    while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET)
+    for (index = 0; index < ADC_BATT_DUMMY_COUNT; index++)
     {
+        ADC_RegularChannelConfig(ADC1, ADC_BATT_CHANNEL, 1, ADC_SampleTime_480Cycles);
+        ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
+        ADC_SoftwareStartConv(ADC1);
+        while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET)
+        {
+        }
+        (void)ADC_GetConversionValue(ADC1);
     }
-    (void)ADC_GetConversionValue(ADC1);
 
     for (index = 0; index < ADC_BATT_SAMPLE_COUNT; index++)
     {
-        ADC_RegularChannelConfig(ADC1, ADC_BATT_CHANNEL, 1, ADC_SampleTime_144Cycles);
+        ADC_RegularChannelConfig(ADC1, ADC_BATT_CHANNEL, 1, ADC_SampleTime_480Cycles);
         ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
         ADC_SoftwareStartConv(ADC1);
 
@@ -112,18 +121,33 @@ uint16_t ADC_Battery_ReadRaw(void)
 
     adc_battery_switch(0U);
 
-    return (uint16_t)(sum / ADC_BATT_SAMPLE_COUNT);
+    adc_battery_last_raw = (uint16_t)(sum / ADC_BATT_SAMPLE_COUNT);
+
+    return adc_battery_last_raw;
 }
 
 uint16_t ADC_Battery_ReadVoltageMv(void)
 {
     uint32_t raw = ADC_Battery_ReadRaw();
-    uint32_t adc_mv = (raw * ADC_REFERENCE_MV) / ADC_RESOLUTION_MAX;
-    uint32_t battery_mv = adc_mv * (ADC_BATT_R_TOP_OHM + ADC_BATT_R_BOTTOM_OHM);
+    uint32_t adc_mv;
+    uint32_t battery_mv;
 
-    battery_mv /= ADC_BATT_R_BOTTOM_OHM;
+    adc_mv = (raw * ADC_REFERENCE_MV + (ADC_RESOLUTION_MAX / 2U)) / ADC_RESOLUTION_MAX;
+    battery_mv = (adc_mv * ADC_BATT_DIVIDER_NUM + (ADC_BATT_DIVIDER_DEN / 2U)) / ADC_BATT_DIVIDER_DEN;
 
-    return (uint16_t)battery_mv;
+    adc_battery_last_voltage_mv = (uint16_t)battery_mv;
+
+    return adc_battery_last_voltage_mv;
+}
+
+uint16_t ADC_Battery_GetLastRaw(void)
+{
+    return adc_battery_last_raw;
+}
+
+uint16_t ADC_Battery_GetLastVoltageMv(void)
+{
+    return adc_battery_last_voltage_mv;
 }
 
 uint8_t ADC_Battery_ReadPercent(void)

@@ -160,6 +160,35 @@ static void main_screen_cancel_imgbtn_event_handler (lv_event_t *e)
     }
 }
 
+static void main_screen_ararm_cancel_imgbtn_event_handler (lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    switch (code) {
+    case LV_EVENT_CLICKED:
+    {
+        lv_obj_add_flag(guider_ui.main_screen_ararm_cont, LV_OBJ_FLAG_HIDDEN);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+static void main_screen_alarm_close_btn_event_handler (lv_event_t *e)
+{
+    lv_ui *ui = (lv_ui *)lv_event_get_user_data(e);
+    lv_event_code_t code = lv_event_get_code(e);
+    switch (code) {
+    case LV_EVENT_CLICKED:
+    {
+        app_alarm_stop(ui);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 static void main_screen_auto_light_sw_event_handler (lv_event_t *e)
 {
     lv_ui *ui = (lv_ui *)lv_event_get_user_data(e);
@@ -188,6 +217,8 @@ void events_init_main_screen (lv_ui *ui)
     lv_obj_add_event_cb(ui->main_screen_light_slider, main_screen_light_slider_event_handler, LV_EVENT_ALL, ui);
     lv_obj_add_event_cb(ui->main_screen_cancel_imgbtn, main_screen_cancel_imgbtn_event_handler, LV_EVENT_ALL, ui);
     lv_obj_add_event_cb(ui->main_screen_auto_light_sw, main_screen_auto_light_sw_event_handler, LV_EVENT_ALL, ui);        
+    lv_obj_add_event_cb(ui->main_screen_ararm_cancel_imgbtn, main_screen_ararm_cancel_imgbtn_event_handler, LV_EVENT_ALL, ui);
+    lv_obj_add_event_cb(ui->main_screen_close_btn, main_screen_alarm_close_btn_event_handler, LV_EVENT_ALL, ui);
 }
 
 static void setting_screen_setting_back_btn_event_handler (lv_event_t *e)
@@ -465,11 +496,14 @@ static void alarm_screen_alarm_back_btn_event_handler (lv_event_t *e)
 
 static void alarm_screen_alarm_set_btn_1_event_handler (lv_event_t *e)
 {
+    lv_ui *ui = (lv_ui *)lv_event_get_user_data(e);
     lv_event_code_t code = lv_event_get_code(e);
     switch (code) {
     case LV_EVENT_CLICKED:
     {
+        app_alarm_select(0U);
         ui_load_scr_animation(&guider_ui, &guider_ui.alarm_set_screen, guider_ui.alarm_set_screen_del, &guider_ui.alarm_screen_del, setup_scr_alarm_set_screen, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
+        app_alarm_prepare_set_ui(&guider_ui);
         break;
     }
     default:
@@ -479,11 +513,14 @@ static void alarm_screen_alarm_set_btn_1_event_handler (lv_event_t *e)
 
 static void alarm_screen_alarm_set_btn_2_event_handler (lv_event_t *e)
 {
+    lv_ui *ui = (lv_ui *)lv_event_get_user_data(e);
     lv_event_code_t code = lv_event_get_code(e);
     switch (code) {
     case LV_EVENT_CLICKED:
     {
+        app_alarm_select(1U);
         ui_load_scr_animation(&guider_ui, &guider_ui.alarm_set_screen, guider_ui.alarm_set_screen_del, &guider_ui.alarm_screen_del, setup_scr_alarm_set_screen, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
+        app_alarm_prepare_set_ui(&guider_ui);
         break;
     }
     default:
@@ -499,6 +536,7 @@ static void alarm_screen_alarm_sw_1_event_handler (lv_event_t *e)
     {
         lv_obj_t * status_obj = lv_event_get_target(e);
         int status = lv_obj_has_state(status_obj, LV_STATE_CHECKED) ? true : false;
+        app_alarm_set_enabled(0U, (uint8_t)status);
         break;
     }
     default:
@@ -514,6 +552,7 @@ static void alarm_screen_alarm_sw_2_event_handler (lv_event_t *e)
     {
         lv_obj_t * status_obj = lv_event_get_target(e);
         int status = lv_obj_has_state(status_obj, LV_STATE_CHECKED) ? true : false;
+        app_alarm_set_enabled(1U, (uint8_t)status);
         break;
     }
     default:
@@ -523,6 +562,7 @@ static void alarm_screen_alarm_sw_2_event_handler (lv_event_t *e)
 
 void events_init_alarm_screen (lv_ui *ui)
 {
+    app_update_alarm_screen_ui(ui);
     lv_obj_add_event_cb(ui->alarm_screen_alarm_back_btn, alarm_screen_alarm_back_btn_event_handler, LV_EVENT_ALL, ui);
     lv_obj_add_event_cb(ui->alarm_screen_alarm_set_btn_1, alarm_screen_alarm_set_btn_1_event_handler, LV_EVENT_ALL, ui);
     lv_obj_add_event_cb(ui->alarm_screen_alarm_set_btn_2, alarm_screen_alarm_set_btn_2_event_handler, LV_EVENT_ALL, ui);
@@ -546,10 +586,13 @@ static void alarm_set_screen_alarm_set_back_btn_event_handler (lv_event_t *e)
 
 static void alarm_set_screen_confirm_btn_event_handler (lv_event_t *e)
 {
+    lv_ui *ui = (lv_ui *)lv_event_get_user_data(e);
     lv_event_code_t code = lv_event_get_code(e);
     switch (code) {
     case LV_EVENT_CLICKED:
     {
+        app_alarm_set_from_rollers(ui);
+        ui_load_scr_animation(&guider_ui, &guider_ui.alarm_screen, guider_ui.alarm_screen_del, &guider_ui.alarm_set_screen_del, setup_scr_alarm_screen, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
         break;
     }
     default:
@@ -559,6 +602,7 @@ static void alarm_set_screen_confirm_btn_event_handler (lv_event_t *e)
 
 void events_init_alarm_set_screen (lv_ui *ui)
 {
+    app_alarm_prepare_set_ui(ui);
     lv_obj_add_event_cb(ui->alarm_set_screen_alarm_set_back_btn, alarm_set_screen_alarm_set_back_btn_event_handler, LV_EVENT_ALL, ui);
     lv_obj_add_event_cb(ui->alarm_set_screen_confirm_btn, alarm_set_screen_confirm_btn_event_handler, LV_EVENT_ALL, ui);
 }
