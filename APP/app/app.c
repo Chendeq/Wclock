@@ -14,6 +14,13 @@
 
 static SemaphoreHandle_t appStateMutex;
 
+/*
+ * 全局运行状态：
+ * 1. 传感器任务持续写入环境光、温湿度、气压、电池等数据；
+ * 2. WiFi/天气相关任务写入联网状态和天气信息；
+ * 3. LVGL任务每次刷新界面前先复制这里的内容，再统一更新控件。
+ * 这样做可以把“业务状态”和“界面绘制”解耦，避免多个任务直接操作LVGL。
+ */
 typedef struct
 {
     float lux;
@@ -36,6 +43,12 @@ typedef struct
     weather_info_t weather;
 } app_state_t;
 
+/*
+ * UI缓存：
+ * 保存上一次已经显示到界面上的关键值。
+ * 刷新主界面时会先把当前状态格式化，再和缓存比较；
+ * 只有内容真的变了才调用LVGL更新控件，减少无意义重绘。
+ */
 typedef struct
 {
     int32_t temp_tenths;
@@ -145,6 +158,13 @@ static uint8_t clamp_percent(int32_t value)
     return (uint8_t)value;
 }
 
+/*
+ * 环境光到背光亮度的分段曲线：
+ * 暗环境下保持较低亮度，避免刺眼；
+ * 室内正常光照缓慢抬升亮度；
+ * 强光环境继续提高，保证屏幕仍然可读。
+ * 这里不用简单线性映射，是为了让实际观感更平滑。
+ */
 static uint8_t map_lux_to_brightness(float lux)
 {
     float target;
@@ -390,6 +410,11 @@ void app_update_main_screen_ui(lv_ui *ui)
         return;
     }
 
+    /*
+     * 先在互斥锁保护下快速复制一份状态快照，然后立刻释放锁。
+     * 后面的字符串格式化、控件比较、LVGL刷新都放到锁外执行，
+     * 这样可以减少锁占用时间，避免传感器任务/WiFi任务长时间等待。
+     */
     if (app_lock(APP_UI_LOCK_TICKS) != pdTRUE)
     {
         return;
@@ -399,10 +424,12 @@ void app_update_main_screen_ui(lv_ui *ui)
     snapshot = g_app_state;
     app_unlock();
 
+    /* 先把浮点传感器值转成便于比较和显示的整数格式。 */
     temp_tenths = float_to_tenths(snapshot.temp);
     humi_tenths = float_to_tenths(snapshot.humi);
     pressure_int = (int32_t)snapshot.pressure;
 
+    /* 传感器有效时显示实时值，无效时统一显示占位文本。 */
     if (snapshot.sht30_ok)
     {
         format_fixed_1_with_prefix(text, sizeof(text), "温度:", temp_tenths, "℃");
@@ -475,11 +502,13 @@ void app_update_main_screen_ui(lv_ui *ui)
         g_ui_cache.battery_percent = snapshot.battery_percent;
     }
 
+    /* 只有滑条值和当前背光不一致时才更新，避免无效重绘。 */
     if (lv_slider_get_value(ui->main_screen_light_slider) != snapshot.brightness_percent)
     {
         lv_slider_set_value(ui->main_screen_light_slider, snapshot.brightness_percent, LV_ANIM_OFF);
     }
 
+    /* 自动亮度打开后禁用手动滑条，关闭后恢复手动控制。 */
     if ((g_ui_cache.auto_brightness_enabled != snapshot.auto_brightness_enabled) && snapshot.auto_brightness_enabled)
     {
         lv_obj_add_state(ui->main_screen_auto_light_sw, LV_STATE_CHECKED);
@@ -547,6 +576,7 @@ void app_update_main_screen_ui(lv_ui *ui)
         g_ui_cache.day = snapshot.rtc_time.day;
     }
 
+    /* 天气未刷新成功前，主界面保持 "--" 占位，避免显示旧数据。 */
     if (snapshot.weather.valid_now)
     {
         lv_snprintf(text, sizeof(text), "%d℃", snapshot.weather.temperature);
@@ -578,6 +608,7 @@ void app_update_main_screen_ui(lv_ui *ui)
                           snapshot.weather.city[0] != '\0' ? snapshot.weather.city : "贵港");
     }
 
+    /* 本轮UI刷新结束后，再统一回写缓存供下轮比较使用。 */
     g_ui_cache.sht30_ok = snapshot.sht30_ok;
     g_ui_cache.spl06_ok = snapshot.spl06_ok;
     g_ui_cache.battery_ok = snapshot.battery_ok;
@@ -738,6 +769,11 @@ void app_alarm_poll(void)
         return;
     }
 
+    /*
+     * rtc_alarm_check() 内部已经处理了“同一闹钟同一天只触发一次”的逻辑，
+     * 这里不重复做判定，只负责把当前响铃状态写入APP层，
+     * 供主界面弹窗显示和蜂鸣器控制使用。
+     */
     if (app_lock(APP_CTRL_LOCK_TICKS) == pdTRUE)
     {
         g_app_state.alarm_ringing = 1U;
@@ -1005,19 +1041,6 @@ void app_set_auto_brightness(uint8_t enabled)
     }
 }
 
-// uint8_t app_get_auto_brightness(void)
-// {
-//     uint8_t enabled = 0;
-
-//     if (app_lock(APP_CTRL_LOCK_TICKS) == pdTRUE)
-//     {
-//         enabled = g_app_state.auto_brightness_enabled;
-//         app_unlock();
-//     }
-
-//     return enabled;
-// }
-
 void app_set_manual_brightness(uint8_t percent)
 {
     uint8_t clamped = clamp_percent(percent);
@@ -1044,28 +1067,6 @@ uint8_t app_get_brightness_percent(void)
 
     return brightness;
 }
-
-// void app_get_sensor_snapshot(sensor_snapshot_t *snapshot)
-// {
-//     if (snapshot == NULL)
-//     {
-//         return;
-//     }
-
-//     if (app_lock(APP_CTRL_LOCK_TICKS) == pdTRUE)
-//     {
-//         snapshot->lux = g_app_state.lux;
-//         snapshot->temp = g_app_state.temp;
-//         snapshot->humi = g_app_state.humi;
-//         snapshot->pressure = g_app_state.pressure;
-//         snapshot->battery_percent = g_app_state.battery_percent;
-//         snapshot->bh1750_ok = g_app_state.bh1750_ok;
-//         snapshot->sht30_ok = g_app_state.sht30_ok;
-//         snapshot->spl06_ok = g_app_state.spl06_ok;
-//         snapshot->battery_ok = g_app_state.battery_ok;
-//         app_unlock();
-//     }
-// }
 
 void app_update_weather_info(const weather_info_t *info)
 {

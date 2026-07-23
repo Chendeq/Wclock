@@ -116,6 +116,14 @@ virtualFolder:
             - path: ../APP/app/wifi.c
             - path: ../APP/app/rtos_task.c
           folders: []
+        - name: GUI_Font
+          files:
+            - path: ../APP/GUI_Font/lv_Font_7.c
+            - path: ../APP/GUI_Font/lv_Font_8.c
+            - path: ../APP/GUI_Font/lv_Font_10.c
+            - path: ../APP/GUI_Font/lv_Font_12.c
+            - path: ../APP/GUI_Font/lv_Font_14.c
+          folders: []
         - name: GUI
           files:
             - path: ../APP/GUI/generated/events_init.c
@@ -132,14 +140,6 @@ virtualFolder:
             - path: ../APP/GUI/generated/setup_scr_wifi_screen.c
             - path: ../APP/GUI/generated/widgets_init.c
             - path: ../APP/GUI/lv_mainstart.c
-          folders: []
-        - name: GUI_Font
-          files:
-            - path: ../APP/GUI_Font/lv_Font_7.c
-            - path: ../APP/GUI_Font/lv_Font_8.c
-            - path: ../APP/GUI_Font/lv_Font_10.c
-            - path: ../APP/GUI_Font/lv_Font_12.c
-            - path: ../APP/GUI_Font/lv_Font_14.c
           folders: []
     - name: Hardware
       files:

@@ -227,24 +227,6 @@ uint16_t ESP_AT_GetResponseSnapshot(char *buffer, uint16_t size)
     return copy_len;
 }
 
-void ESP_AT_StartTcp(const char *host, uint16_t port)
-{
-    char cmd[96];
-
-    if (host == 0)
-    {
-        return;
-    }
-
-    snprintf(cmd, sizeof(cmd), "AT+CIPSTART=\"TCP\",\"%s\",%u", host, (unsigned int)port);
-    ESP_AT_SendCmdAsync(cmd);
-}
-
-void ESP_AT_CloseTcp(void)
-{
-    ESP_AT_SendCmdAsync("AT+CIPCLOSE");
-}
-
 void ESP_AT_PrepareSend(uint16_t len)
 {
     char cmd[24];
