@@ -19,8 +19,6 @@ void ESP_AT_ClearResponse(void);
 void ESP_AT_SendCmdAsync(const char *cmd);
 void ESP_AT_SendRaw(const char *data);
 uint16_t ESP_AT_GetResponseSnapshot(char *buffer, uint16_t size);
-void ESP_AT_StartTcp(const char *host, uint16_t port);
-void ESP_AT_CloseTcp(void);
 void ESP_AT_PrepareSend(uint16_t len);
 void ESP_AT_HttpGet(const char *url);
 void ESP_AT_EnableSntp(void);

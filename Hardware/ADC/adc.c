@@ -21,6 +21,11 @@
 static uint16_t adc_battery_last_raw;
 static uint16_t adc_battery_last_voltage_mv;
 
+/*
+ * PC1控制电池检测分压回路的开关。
+ * 只有真正采样时才拉高使能，平时关闭，
+ * 这样可以减少分压电阻长期挂在电池上的静态损耗。
+ */
 static void adc_battery_switch(uint8_t enable)
 {
     if (enable)
@@ -43,6 +48,11 @@ static void adc_battery_settle_delay(void)
     }
 }
 
+/*
+ * PC0作为ADC输入读取分压后的电池电压，
+ * PC1作为检测使能脚控制分压回路是否接入。
+ * 这种接法适合低功耗场景下的电池电量检测。
+ */
 void ADC_Battery_Init(void)
 {
     GPIO_InitTypeDef gpio_init;
@@ -95,6 +105,11 @@ uint16_t ADC_Battery_ReadRaw(void)
     adc_battery_switch(1U);
     adc_battery_settle_delay();
 
+    /*
+     * 刚打开分压回路时，分压点电压和ADC采样保持电容都需要一点稳定时间。
+     * 先做几次丢弃转换，可以避开刚上电那一瞬间的不稳定值，
+     * 后面再进入正式平均采样。
+     */
     for (index = 0; index < ADC_BATT_DUMMY_COUNT; index++)
     {
         ADC_RegularChannelConfig(ADC1, ADC_BATT_CHANNEL, 1, ADC_SampleTime_480Cycles);
@@ -108,6 +123,7 @@ uint16_t ADC_Battery_ReadRaw(void)
 
     for (index = 0; index < ADC_BATT_SAMPLE_COUNT; index++)
     {
+        /* 多次采样求平均，降低瞬时抖动对电量显示的影响。 */
         ADC_RegularChannelConfig(ADC1, ADC_BATT_CHANNEL, 1, ADC_SampleTime_480Cycles);
         ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
         ADC_SoftwareStartConv(ADC1);
@@ -121,6 +137,11 @@ uint16_t ADC_Battery_ReadRaw(void)
 
     adc_battery_switch(0U);
 
+    /*
+     * 记录最近一次平均后的原始ADC值。
+     * 当界面电量显示异常时，可以直接结合这个值判断：
+     * 是采样链路有问题，还是后面的电压/百分比换算有问题。
+     */
     adc_battery_last_raw = (uint16_t)(sum / ADC_BATT_SAMPLE_COUNT);
 
     return adc_battery_last_raw;
@@ -132,6 +153,12 @@ uint16_t ADC_Battery_ReadVoltageMv(void)
     uint32_t adc_mv;
     uint32_t battery_mv;
 
+    /*
+     * 计算过程分两步：
+     * 1. 先把ADC原始值换算成ADC引脚上的毫伏值；
+     * 2. 再根据分压比还原成电池端实际电压。
+     * 用分步整数运算是为了降低32位乘法溢出的风险，同时保留四舍五入。
+     */
     adc_mv = (raw * ADC_REFERENCE_MV + (ADC_RESOLUTION_MAX / 2U)) / ADC_RESOLUTION_MAX;
     battery_mv = (adc_mv * ADC_BATT_DIVIDER_NUM + (ADC_BATT_DIVIDER_DEN / 2U)) / ADC_BATT_DIVIDER_DEN;
 
@@ -155,16 +182,25 @@ uint8_t ADC_Battery_ReadPercent(void)
     uint16_t battery_mv = ADC_Battery_ReadVoltageMv();
     uint32_t percent;
 
+    /*
+     * 这里按单节锂电池的工作范围做线性百分比映射：
+     * 2.7V 视为0%，4.2V 视为100%。
+     * 这种算法简单直观，适合作为界面电量提示，
+     * 但它不是严格的SOC曲线估算。
+     */
     if (battery_mv <= ADC_BATTERY_EMPTY_MV)
     {
+        /* 低于空电阈值时直接钳到 0%。 */
         return 0U;
     }
 
     if (battery_mv >= ADC_BATTERY_FULL_MV)
     {
+        /* 高于满电阈值时直接钳到 100%。 */
         return 100U;
     }
 
+    /* 中间区间做线性插值，得到界面显示用百分比。 */
     percent = (uint32_t)(battery_mv - ADC_BATTERY_EMPTY_MV) * 100U;
     percent /= (ADC_BATTERY_FULL_MV - ADC_BATTERY_EMPTY_MV);
 

@@ -24,6 +24,13 @@ typedef enum
     WEATHER_SM_WAIT_DAILY
 } weather_sm_state_t;
 
+/*
+ * 天气请求上下文：
+ * 先请求实时天气，再请求三天预报；
+ * state 记录当前卡在哪个阶段，
+ * deadline 控制每一步最长等待时间，
+ * next_refresh_tick 控制下一次自动刷新时机。
+ */
 typedef struct
 {
     weather_sm_state_t state;
@@ -82,6 +89,11 @@ static uint8_t weather_copy_json_string(const char *json, const char *key, char 
         return 0U;
     }
 
+    /*
+     * 这里只做轻量字符串提取，前提是接口响应格式相对稳定。
+     * 优点是代码量小、内存占用低，适合当前单片机项目；
+     * 代价是它并不是通用JSON解析器，接口字段一旦变动就要跟着调整。
+     */
     snprintf(pattern, sizeof(pattern), "\"%s\":\"", key);
     start = strstr(json, pattern);
     if (start == NULL)
@@ -300,6 +312,7 @@ static uint8_t weather_try_update_now(const char *response)
         return 0U;
     }
 
+    /* 先粗判响应里是否带有实时天气字段，避免过早进入解析。 */
     if ((strstr(response, "\"now\"") == NULL) &&
         (strstr(response, "\"temperature\"") == NULL))
     {
@@ -311,6 +324,7 @@ static uint8_t weather_try_update_now(const char *response)
         return 0U;
     }
 
+    /* 解析成功后立刻同步到APP层，主界面可先显示当前天气。 */
     app_update_weather_info(&g_weather_ctx.info);
     return 1U;
 }
@@ -322,6 +336,7 @@ static uint8_t weather_try_update_daily(const char *response)
         return 0U;
     }
 
+    /* daily 接口未返回完整预报字段前，不推进到成功状态。 */
     if (strstr(response, "\"daily\"") == NULL)
     {
         return 0U;
@@ -332,6 +347,7 @@ static uint8_t weather_try_update_daily(const char *response)
         return 0U;
     }
 
+    /* 三天天气解析完成后，再一次性把预报结果同步出去。 */
     app_update_weather_info(&g_weather_ctx.info);
     return 1U;
 }
@@ -350,6 +366,7 @@ void weather_init(void)
 
     if (weather_lock(WEATHER_LOCK_TICKS) == pdTRUE)
     {
+        /* 初始化时先清空天气数据，避免界面误显示上一次残留。 */
         memset(&g_weather_ctx.info, 0, sizeof(g_weather_ctx.info));
         strncpy(g_weather_ctx.info.city, WEATHER_CITY_NAME, sizeof(g_weather_ctx.info.city) - 1U);
         g_weather_ctx.info.city[sizeof(g_weather_ctx.info.city) - 1U] = '\0';
@@ -366,6 +383,10 @@ void weather_notify_wifi_connected(void)
 {
     if (weather_lock(WEATHER_LOCK_TICKS) == pdTRUE)
     {
+        /*
+         * WiFi刚连上时不等下一次定时刷新，直接把 pending_refresh 置位。
+         * 这样联网成功后用户能更快看到最新天气，而不是再等一个刷新周期。
+         */
         g_weather_ctx.pending_refresh = 1U;
         g_weather_ctx.next_refresh_tick = 0U;
         weather_unlock();
@@ -413,6 +434,11 @@ void weather_task_process(void)
     if ((g_weather_ctx.state == WEATHER_SM_IDLE) &&
         (g_weather_ctx.pending_refresh || (g_weather_ctx.next_refresh_tick == 0U) || weather_is_timeout(g_weather_ctx.next_refresh_tick, now)))
     {
+        /*
+         * 每轮天气刷新都从 now 接口开始。
+         * 先把实时天气拿到并更新界面，再继续请求 daily 接口，
+         * 这样就算后半段失败，主界面至少也能先显示当前天气。
+         */
         g_weather_ctx.pending_refresh = 0U;
         g_weather_ctx.info.valid_now = 0U;
         g_weather_ctx.info.valid_daily = 0U;
@@ -435,6 +461,7 @@ void weather_task_process(void)
     case WEATHER_SM_WAIT_NOW:
         if (weather_try_update_now(response))
         {
+            /* 实时天气成功后继续请求三天预报，完成同一轮刷新。 */
             snprintf(url, sizeof(url),
                      "http://api.seniverse.com/v3/weather/daily.json?key=%s&location=%s&language=zh-Hans&unit=c&start=0&days=3",
                      WEATHER_API_KEY,
@@ -445,6 +472,7 @@ void weather_task_process(void)
         }
         else if (weather_is_timeout(g_weather_ctx.deadline, now))
         {
+            /* 当前天气超时后结束本轮刷新，等待下一次周期触发。 */
             g_weather_ctx.state = WEATHER_SM_IDLE;
             g_weather_ctx.next_refresh_tick = now + pdMS_TO_TICKS(WEATHER_REFRESH_INTERVAL_MS);
         }
@@ -453,11 +481,13 @@ void weather_task_process(void)
     case WEATHER_SM_WAIT_DAILY:
         if (weather_try_update_daily(response))
         {
+            /* 预报获取完成后回到空闲态，等待下个刷新周期。 */
             g_weather_ctx.state = WEATHER_SM_IDLE;
             g_weather_ctx.next_refresh_tick = now + pdMS_TO_TICKS(WEATHER_REFRESH_INTERVAL_MS);
         }
         else if (weather_is_timeout(g_weather_ctx.deadline, now))
         {
+            /* 即使预报失败，也不要卡在等待态，交给下轮刷新重试。 */
             g_weather_ctx.state = WEATHER_SM_IDLE;
             g_weather_ctx.next_refresh_tick = now + pdMS_TO_TICKS(WEATHER_REFRESH_INTERVAL_MS);
         }

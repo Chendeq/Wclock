@@ -32,6 +32,11 @@ static void lvgl_task(void *pvParameters)
 
     setup_ui(&guider_ui);
 
+    /*
+     * LVGL相关调用统一放在本任务执行。
+     * 其他任务只负责采集数据或推进状态机，不直接碰界面对象，
+     * 这样可以避免跨任务操作LVGL带来的竞争和显示异常。
+     */
     while (1)
     {
         uint32_t wait_ms;
@@ -72,6 +77,11 @@ static void wifi_task(void *pvParameters)
     wifi_init();
     weather_init();
 
+    /*
+     * WiFi连接和天气请求都设计成非阻塞状态机：
+     * 每20ms推进一步，既能保持联网流程持续进行，
+     * 又不会因为等待AT响应或HTTP结果而卡住其他任务。
+     */
     while (1)
     {
         wifi_status_t wifi_status;
@@ -101,6 +111,11 @@ static void wifi_task(void *pvParameters)
 static void sensor_task(void *pvParameters)
 {
     uint32_t tick = 0;
+    /*
+     * battery_tick 初值直接设为阈值，
+     * 这样系统上电后第一轮循环就会先测一次电池电压，
+     * 后面再按5分钟周期重新测量。
+     */
     uint32_t battery_tick = SENSOR_BATTERY_SAMPLE_TICKS;
     sht30_data_t sht30_data;
 
@@ -119,6 +134,11 @@ static void sensor_task(void *pvParameters)
         app_sensor_update_lux(lux);
         app_apply_auto_brightness_step();
 
+        /*
+         * 电池电压不需要高频采样。
+         * 这里每5分钟读一次，既能反映电量变化，
+         * 又能减少分压电阻和ADC检测带来的额外耗电。
+         */
         if (battery_tick >= SENSOR_BATTERY_SAMPLE_TICKS)
         {
             uint8_t battery_percent = ADC_Battery_ReadPercent();
@@ -127,6 +147,11 @@ static void sensor_task(void *pvParameters)
             battery_tick = 0U;
         }
 
+        /*
+         * 任务本身每200ms运行一次，
+         * 但温湿度和气压没必要跟环境光一样高频更新，
+         * 所以每5个节拍采一次，实际约为1秒一更。
+         */
         if ((tick % 5U) == 0U)
         {
             if (SHT30_Read_Data(&sht30_data) == 0U)
