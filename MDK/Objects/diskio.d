@@ -1,9 +1,0 @@
-.\objects\diskio.o: ..\Middleweares\FATFS\source\diskio.c
-.\objects\diskio.o: ..\Middleweares\FATFS\source\diskio.h
-.\objects\diskio.o: ..\Middleweares\FATFS\source\ff.h
-.\objects\diskio.o: ..\Middleweares\FATFS\source\ffconf.h
-.\objects\diskio.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\stdint.h
-.\objects\diskio.o: ..\Hardware\SD_CARD\tf.h
-.\objects\diskio.o: D:\SoftWare\Keil\Keil5\ARM\ARMComplierV506\Bin\..\include\string.h
-.\objects\diskio.o: ..\Hardware\W25Q128\w25q128.h
-.\objects\diskio.o: ..\Hardware\SPI\spi.h

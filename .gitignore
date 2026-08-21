@@ -53,3 +53,12 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Keil MDK build artifacts
+*.crf
+*.dep
+*.lst
+*.axf
+*.lnp
+*.s19
+

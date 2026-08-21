@@ -13,3 +13,8 @@
 # eide template
 *.ept
 *.eide-template
+
+# Keil MDK output directories
+/Objects
+/Listings
+
