@@ -116,14 +116,6 @@ virtualFolder:
             - path: ../APP/app/wifi.c
             - path: ../APP/app/rtos_task.c
           folders: []
-        - name: GUI_Font
-          files:
-            - path: ../APP/GUI_Font/lv_Font_7.c
-            - path: ../APP/GUI_Font/lv_Font_8.c
-            - path: ../APP/GUI_Font/lv_Font_10.c
-            - path: ../APP/GUI_Font/lv_Font_12.c
-            - path: ../APP/GUI_Font/lv_Font_14.c
-          folders: []
         - name: GUI
           files:
             - path: ../APP/GUI/generated/events_init.c
@@ -140,6 +132,14 @@ virtualFolder:
             - path: ../APP/GUI/generated/setup_scr_wifi_screen.c
             - path: ../APP/GUI/generated/widgets_init.c
             - path: ../APP/GUI/lv_mainstart.c
+          folders: []
+        - name: GUI_Font
+          files:
+            - path: ../APP/GUI_Font/lv_Font_7.c
+            - path: ../APP/GUI_Font/lv_Font_8.c
+            - path: ../APP/GUI_Font/lv_Font_10.c
+            - path: ../APP/GUI_Font/lv_Font_12.c
+            - path: ../APP/GUI_Font/lv_Font_14.c
           folders: []
     - name: Hardware
       files:
@@ -208,10 +208,6 @@ virtualFolder:
     - name: MALLOC
       files:
         - path: ../Middleweares/MALLOC/malloc.c
-      folders: []
-    - name: FONTS
-      files:
-        - path: ../Middleweares/TEXT/fonts.c
       folders: []
     - name: LVGL
       files: []
@@ -440,6 +436,10 @@ virtualFolder:
             - path: ../Middleweares/LVGL/lv_conf.h
             - path: ../Middleweares/LVGL/lvgl.h
           folders: []
+    - name: FONTS
+      files:
+        - path: ../Middleweares/TEXT/fonts.c
+      folders: []
 dependenceList: []
 outDir: build
 miscInfo:
@@ -489,6 +489,7 @@ targets:
         - ../Hardware/ESP_AT
         - ../Hardware/RTC
         - ../Hardware/ADC
+        - ../Hardware/BEEP
         - ../APP
         - ../APP/GUI
         - ../APP/GUI_Font
@@ -497,7 +498,6 @@ targets:
         - ../APP/app
         - .cmsis/include
         - RTE/_Project
-        - ../Hardware/BEEP
       libList: []
     excludeList: []
     settings:
