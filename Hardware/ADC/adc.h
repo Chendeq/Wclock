@@ -8,10 +8,11 @@
 #define ADC_BATTERY_FULL_MV    4200U
 
 void ADC_Battery_Init(void);
-uint16_t ADC_Battery_ReadRaw(void);
-uint16_t ADC_Battery_ReadVoltageMv(void);
-uint16_t ADC_Battery_GetLastRaw(void);
-uint16_t ADC_Battery_GetLastVoltageMv(void);
-uint8_t ADC_Battery_ReadPercent(void);
+uint8_t ADC_Battery_StartSample(void);
+uint8_t ADC_Battery_IsBusy(void);
+uint8_t ADC_Battery_IsSampleReady(void);
+void ADC_Battery_ClearSampleReady(void);
+uint8_t ADC_Battery_GetLastPercent(void);
+void DMA2_Stream0_IRQHandler(void);
 
 #endif

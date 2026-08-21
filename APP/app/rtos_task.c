@@ -111,12 +111,12 @@ static void wifi_task(void *pvParameters)
 static void sensor_task(void *pvParameters)
 {
     uint32_t tick = 0;
+    uint32_t battery_tick = SENSOR_BATTERY_SAMPLE_TICKS;
     /*
      * battery_tick 初值直接设为阈值，
      * 这样系统上电后第一轮循环就会先测一次电池电压，
      * 后面再按5分钟周期重新测量。
      */
-    uint32_t battery_tick = SENSOR_BATTERY_SAMPLE_TICKS;
     sht30_data_t sht30_data;
 
     (void)pvParameters;
@@ -139,12 +139,19 @@ static void sensor_task(void *pvParameters)
          * 这里每5分钟读一次，既能反映电量变化，
          * 又能减少分压电阻和ADC检测带来的额外耗电。
          */
-        if (battery_tick >= SENSOR_BATTERY_SAMPLE_TICKS)
+        if ((battery_tick >= SENSOR_BATTERY_SAMPLE_TICKS) &&
+            (ADC_Battery_IsBusy() == 0U))
         {
-            uint8_t battery_percent = ADC_Battery_ReadPercent();
+            if (ADC_Battery_StartSample() != 0U)
+            {
+                battery_tick = 0U;
+            }
+        }
 
-            app_sensor_update_battery(battery_percent, 1);
-            battery_tick = 0U;
+        if (ADC_Battery_IsSampleReady() != 0U)
+        {
+            app_sensor_update_battery(ADC_Battery_GetLastPercent(), 1U);
+            ADC_Battery_ClearSampleReady();
         }
 
         /*

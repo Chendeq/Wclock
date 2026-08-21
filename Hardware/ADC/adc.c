@@ -1,34 +1,42 @@
 #include "adc.h"
+#include "delay.h"
 
-#define ADC_BATT_GPIO_PORT          GPIOC
-#define ADC_BATT_GPIO_PIN           GPIO_Pin_0
-#define ADC_BATT_GPIO_CLK           RCC_AHB1Periph_GPIOC
-#define ADC_BATT_CHANNEL            ADC_Channel_10
+#define ADC_BATT_GPIO_PORT GPIOC
+#define ADC_BATT_GPIO_PIN GPIO_Pin_0
+#define ADC_BATT_GPIO_CLK RCC_AHB1Periph_GPIOC
+#define ADC_BATT_CHANNEL ADC_Channel_10
 
-#define BATT_DET_GPIO_PORT          GPIOC
-#define BATT_DET_GPIO_PIN           GPIO_Pin_1
-#define BATT_DET_GPIO_CLK           RCC_AHB1Periph_GPIOC
+#define BATT_DET_GPIO_PORT GPIOC
+#define BATT_DET_GPIO_PIN GPIO_Pin_1
+#define BATT_DET_GPIO_CLK RCC_AHB1Periph_GPIOC
 
-#define ADC_BATT_SAMPLE_COUNT       8U
-#define ADC_BATT_DUMMY_COUNT        2U
-#define ADC_REFERENCE_MV            3300U
-#define ADC_RESOLUTION_MAX          4095U
-#define ADC_BATT_R_TOP_OHM          30000U
-#define ADC_BATT_R_BOTTOM_OHM       15000U
-#define ADC_BATT_DIVIDER_NUM        (ADC_BATT_R_TOP_OHM + ADC_BATT_R_BOTTOM_OHM)
-#define ADC_BATT_DIVIDER_DEN        ADC_BATT_R_BOTTOM_OHM
+#define ADC_BATT_DMA_CLK RCC_AHB1Periph_DMA2
+#define ADC_BATT_DMA_STREAM DMA2_Stream0
+#define ADC_BATT_DMA_CHANNEL DMA_Channel_0
+#define ADC_BATT_DMA_IRQn DMA2_Stream0_IRQn
+#define ADC_BATT_DMA_TC_FLAG DMA_FLAG_TCIF0
+#define ADC_BATT_DMA_TE_FLAG DMA_FLAG_TEIF0
+#define ADC_BATT_DMA_ALL_FLAGS (DMA_FLAG_FEIF0 | DMA_FLAG_DMEIF0 | DMA_FLAG_TEIF0 | DMA_FLAG_HTIF0 | DMA_FLAG_TCIF0)
 
-static uint16_t adc_battery_last_raw;
-static uint16_t adc_battery_last_voltage_mv;
+#define ADC_BATT_SAMPLE_COUNT 8U
+#define ADC_REFERENCE_MV 3300U
+#define ADC_RESOLUTION_MAX 4095U
+#define ADC_BATT_R_TOP_OHM 30000U
+#define ADC_BATT_R_BOTTOM_OHM 15000U
+#define ADC_BATT_DIVIDER_NUM (ADC_BATT_R_TOP_OHM + ADC_BATT_R_BOTTOM_OHM)
+#define ADC_BATT_DIVIDER_DEN ADC_BATT_R_BOTTOM_OHM
+#define ADC_BATT_SETTLE_DELAY_MS 5U
 
-/*
- * PC1控制电池检测分压回路的开关。
- * 只有真正采样时才拉高使能，平时关闭，
- * 这样可以减少分压电阻长期挂在电池上的静态损耗。
- */
+static volatile uint16_t adc_battery_last_raw;
+static volatile uint16_t adc_battery_last_voltage_mv;
+static volatile uint8_t adc_battery_last_percent;
+static volatile uint16_t adc_battery_dma_buffer[ADC_BATT_SAMPLE_COUNT];
+static volatile uint8_t adc_battery_sampling;
+static volatile uint8_t adc_battery_sample_ready;
+
 static void adc_battery_switch(uint8_t enable)
 {
-    if (enable)
+    if (enable != 0U)
     {
         GPIO_SetBits(BATT_DET_GPIO_PORT, BATT_DET_GPIO_PIN);
     }
@@ -38,28 +46,131 @@ static void adc_battery_switch(uint8_t enable)
     }
 }
 
-static void adc_battery_settle_delay(void)
+static uint8_t adc_battery_calc_percent(uint32_t battery_mv)
 {
-    volatile uint32_t i;
+    uint32_t percent;
 
-    for (i = 0; i < 300000U; i++)
+    if (battery_mv <= ADC_BATTERY_EMPTY_MV)
     {
-        __NOP();
+        return 0U;
     }
+
+    if (battery_mv >= ADC_BATTERY_FULL_MV)
+    {
+        return 100U;
+    }
+
+    percent = (battery_mv - ADC_BATTERY_EMPTY_MV) * 100U;
+    percent /= (ADC_BATTERY_FULL_MV - ADC_BATTERY_EMPTY_MV);
+
+    return (uint8_t)percent;
 }
 
-/*
- * PC0作为ADC输入读取分压后的电池电压，
- * PC1作为检测使能脚控制分压回路是否接入。
- * 这种接法适合低功耗场景下的电池电量检测。
- */
+static void adc_battery_dma_init(void)
+{
+    DMA_InitTypeDef dma_init;
+    NVIC_InitTypeDef nvic_init;
+
+    DMA_Cmd(ADC_BATT_DMA_STREAM, DISABLE);
+    while (DMA_GetCmdStatus(ADC_BATT_DMA_STREAM) != DISABLE)
+    {
+    }
+
+    DMA_DeInit(ADC_BATT_DMA_STREAM);
+    DMA_StructInit(&dma_init);
+    dma_init.DMA_Channel = ADC_BATT_DMA_CHANNEL;
+    dma_init.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
+    dma_init.DMA_Memory0BaseAddr = (uint32_t)adc_battery_dma_buffer;
+    dma_init.DMA_DIR = DMA_DIR_PeripheralToMemory;
+    dma_init.DMA_BufferSize = ADC_BATT_SAMPLE_COUNT;
+    dma_init.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    dma_init.DMA_MemoryInc = DMA_MemoryInc_Enable;
+    dma_init.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+    dma_init.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+    dma_init.DMA_Mode = DMA_Mode_Normal;
+    dma_init.DMA_Priority = DMA_Priority_High;
+    dma_init.DMA_FIFOMode = DMA_FIFOMode_Disable;
+    dma_init.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
+    dma_init.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+    dma_init.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+    DMA_Init(ADC_BATT_DMA_STREAM, &dma_init);
+
+    DMA_ClearFlag(ADC_BATT_DMA_STREAM, ADC_BATT_DMA_ALL_FLAGS);
+    DMA_ITConfig(ADC_BATT_DMA_STREAM, DMA_IT_TC | DMA_IT_TE, ENABLE);
+
+    nvic_init.NVIC_IRQChannel = ADC_BATT_DMA_IRQn;
+    nvic_init.NVIC_IRQChannelPreemptionPriority = 2;
+    nvic_init.NVIC_IRQChannelSubPriority = 2;
+    nvic_init.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic_init);
+}
+
+static void adc_battery_prepare_dma_transfer(void)
+{
+    uint32_t index;
+
+    DMA_Cmd(ADC_BATT_DMA_STREAM, DISABLE);
+    while (DMA_GetCmdStatus(ADC_BATT_DMA_STREAM) != DISABLE)
+    {
+    }
+
+    for (index = 0U; index < ADC_BATT_SAMPLE_COUNT; index++)
+    {
+        adc_battery_dma_buffer[index] = 0U;
+    }
+
+    DMA_ClearFlag(ADC_BATT_DMA_STREAM, ADC_BATT_DMA_ALL_FLAGS);
+    ADC_BATT_DMA_STREAM->M0AR = (uint32_t)adc_battery_dma_buffer;
+    ADC_BATT_DMA_STREAM->NDTR = ADC_BATT_SAMPLE_COUNT;
+    DMA_Cmd(ADC_BATT_DMA_STREAM, ENABLE);
+}
+
+static void adc_battery_stop_hw(void)
+{
+    ADC_Cmd(ADC1, DISABLE);
+    DMA_Cmd(ADC_BATT_DMA_STREAM, DISABLE);
+    while (DMA_GetCmdStatus(ADC_BATT_DMA_STREAM) != DISABLE)
+    {
+    }
+    ADC_ClearFlag(ADC1, ADC_FLAG_EOC | ADC_FLAG_OVR);
+    adc_battery_switch(0U);
+}
+
+static void adc_battery_complete_sampling(void)
+{
+    uint32_t sum = 0U;
+    uint32_t index;
+    uint32_t adc_mv;
+    uint32_t battery_mv;
+
+    for (index = 0U; index < ADC_BATT_SAMPLE_COUNT; index++)
+    {
+        sum += adc_battery_dma_buffer[index];
+    }
+
+    adc_battery_last_raw = (uint16_t)(sum / ADC_BATT_SAMPLE_COUNT);
+    adc_mv = ((uint32_t)adc_battery_last_raw * ADC_REFERENCE_MV + (ADC_RESOLUTION_MAX / 2U)) / ADC_RESOLUTION_MAX;
+    battery_mv = (adc_mv * ADC_BATT_DIVIDER_NUM + (ADC_BATT_DIVIDER_DEN / 2U)) / ADC_BATT_DIVIDER_DEN;
+    adc_battery_last_voltage_mv = (uint16_t)battery_mv;
+    adc_battery_last_percent = adc_battery_calc_percent(battery_mv);
+
+    adc_battery_sampling = 0U;
+    adc_battery_sample_ready = 1U;
+}
+
+static void adc_battery_reset_after_error(void)
+{
+    adc_battery_stop_hw();
+    adc_battery_sampling = 0U;
+}
+
 void ADC_Battery_Init(void)
 {
     GPIO_InitTypeDef gpio_init;
     ADC_CommonInitTypeDef adc_common_init;
     ADC_InitTypeDef adc_init;
 
-    RCC_AHB1PeriphClockCmd(ADC_BATT_GPIO_CLK | BATT_DET_GPIO_CLK, ENABLE);
+    RCC_AHB1PeriphClockCmd(ADC_BATT_GPIO_CLK | BATT_DET_GPIO_CLK | ADC_BATT_DMA_CLK, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 
     GPIO_StructInit(&gpio_init);
@@ -87,122 +198,80 @@ void ADC_Battery_Init(void)
     ADC_StructInit(&adc_init);
     adc_init.ADC_Resolution = ADC_Resolution_12b;
     adc_init.ADC_ScanConvMode = DISABLE;
-    adc_init.ADC_ContinuousConvMode = DISABLE;
+    adc_init.ADC_ContinuousConvMode = ENABLE;
     adc_init.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
     adc_init.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
     adc_init.ADC_DataAlign = ADC_DataAlign_Right;
     adc_init.ADC_NbrOfConversion = 1;
     ADC_Init(ADC1, &adc_init);
 
+    ADC_RegularChannelConfig(ADC1, ADC_BATT_CHANNEL, 1, ADC_SampleTime_480Cycles);
+    ADC_DMARequestAfterLastTransferCmd(ADC1, ENABLE);
+    ADC_DMACmd(ADC1, ENABLE);
     ADC_Cmd(ADC1, ENABLE);
+
+    adc_battery_last_raw = 0U;
+    adc_battery_last_voltage_mv = 0U;
+    adc_battery_last_percent = 0U;
+    adc_battery_sampling = 0U;
+    adc_battery_sample_ready = 0U;
+
+    adc_battery_dma_init();
 }
 
-uint16_t ADC_Battery_ReadRaw(void)
+uint8_t ADC_Battery_StartSample(void)
 {
-    uint32_t sum = 0;
-    uint32_t index;
-
-    adc_battery_switch(1U);
-    adc_battery_settle_delay();
-
-    /*
-     * 刚打开分压回路时，分压点电压和ADC采样保持电容都需要一点稳定时间。
-     * 先做几次丢弃转换，可以避开刚上电那一瞬间的不稳定值，
-     * 后面再进入正式平均采样。
-     */
-    for (index = 0; index < ADC_BATT_DUMMY_COUNT; index++)
+    if (adc_battery_sampling != 0U)
     {
-        ADC_RegularChannelConfig(ADC1, ADC_BATT_CHANNEL, 1, ADC_SampleTime_480Cycles);
-        ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
-        ADC_SoftwareStartConv(ADC1);
-        while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET)
-        {
-        }
-        (void)ADC_GetConversionValue(ADC1);
-    }
-
-    for (index = 0; index < ADC_BATT_SAMPLE_COUNT; index++)
-    {
-        /* 多次采样求平均，降低瞬时抖动对电量显示的影响。 */
-        ADC_RegularChannelConfig(ADC1, ADC_BATT_CHANNEL, 1, ADC_SampleTime_480Cycles);
-        ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
-        ADC_SoftwareStartConv(ADC1);
-
-        while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET)
-        {
-        }
-
-        sum += ADC_GetConversionValue(ADC1);
-    }
-
-    adc_battery_switch(0U);
-
-    /*
-     * 记录最近一次平均后的原始ADC值。
-     * 当界面电量显示异常时，可以直接结合这个值判断：
-     * 是采样链路有问题，还是后面的电压/百分比换算有问题。
-     */
-    adc_battery_last_raw = (uint16_t)(sum / ADC_BATT_SAMPLE_COUNT);
-
-    return adc_battery_last_raw;
-}
-
-uint16_t ADC_Battery_ReadVoltageMv(void)
-{
-    uint32_t raw = ADC_Battery_ReadRaw();
-    uint32_t adc_mv;
-    uint32_t battery_mv;
-
-    /*
-     * 计算过程分两步：
-     * 1. 先把ADC原始值换算成ADC引脚上的毫伏值；
-     * 2. 再根据分压比还原成电池端实际电压。
-     * 用分步整数运算是为了降低32位乘法溢出的风险，同时保留四舍五入。
-     */
-    adc_mv = (raw * ADC_REFERENCE_MV + (ADC_RESOLUTION_MAX / 2U)) / ADC_RESOLUTION_MAX;
-    battery_mv = (adc_mv * ADC_BATT_DIVIDER_NUM + (ADC_BATT_DIVIDER_DEN / 2U)) / ADC_BATT_DIVIDER_DEN;
-
-    adc_battery_last_voltage_mv = (uint16_t)battery_mv;
-
-    return adc_battery_last_voltage_mv;
-}
-
-uint16_t ADC_Battery_GetLastRaw(void)
-{
-    return adc_battery_last_raw;
-}
-
-uint16_t ADC_Battery_GetLastVoltageMv(void)
-{
-    return adc_battery_last_voltage_mv;
-}
-
-uint8_t ADC_Battery_ReadPercent(void)
-{
-    uint16_t battery_mv = ADC_Battery_ReadVoltageMv();
-    uint32_t percent;
-
-    /*
-     * 这里按单节锂电池的工作范围做线性百分比映射：
-     * 2.7V 视为0%，4.2V 视为100%。
-     * 这种算法简单直观，适合作为界面电量提示，
-     * 但它不是严格的SOC曲线估算。
-     */
-    if (battery_mv <= ADC_BATTERY_EMPTY_MV)
-    {
-        /* 低于空电阈值时直接钳到 0%。 */
         return 0U;
     }
 
-    if (battery_mv >= ADC_BATTERY_FULL_MV)
+    adc_battery_sampling = 1U;
+    adc_battery_sample_ready = 0U;
+    adc_battery_switch(1U);
+    delay_ms(ADC_BATT_SETTLE_DELAY_MS);
+
+    adc_battery_prepare_dma_transfer();
+    ADC_Cmd(ADC1, ENABLE);
+    ADC_ClearFlag(ADC1, ADC_FLAG_EOC | ADC_FLAG_OVR);
+    ADC_SoftwareStartConv(ADC1);
+
+    return 1U;
+}
+
+uint8_t ADC_Battery_IsBusy(void)
+{
+    return adc_battery_sampling;
+}
+
+uint8_t ADC_Battery_IsSampleReady(void)
+{
+    return adc_battery_sample_ready;
+}
+
+void ADC_Battery_ClearSampleReady(void)
+{
+    adc_battery_sample_ready = 0U;
+}
+
+uint8_t ADC_Battery_GetLastPercent(void)
+{
+    return adc_battery_last_percent;
+}
+
+
+void DMA2_Stream0_IRQHandler(void)
+{
+    if (DMA_GetFlagStatus(ADC_BATT_DMA_STREAM, ADC_BATT_DMA_TC_FLAG) != RESET)
     {
-        /* 高于满电阈值时直接钳到 100%。 */
-        return 100U;
+        DMA_ClearFlag(ADC_BATT_DMA_STREAM, ADC_BATT_DMA_ALL_FLAGS);
+        adc_battery_stop_hw();
+        adc_battery_complete_sampling();
     }
 
-    /* 中间区间做线性插值，得到界面显示用百分比。 */
-    percent = (uint32_t)(battery_mv - ADC_BATTERY_EMPTY_MV) * 100U;
-    percent /= (ADC_BATTERY_FULL_MV - ADC_BATTERY_EMPTY_MV);
-
-    return (uint8_t)percent;
+    if (DMA_GetFlagStatus(ADC_BATT_DMA_STREAM, ADC_BATT_DMA_TE_FLAG) != RESET)
+    {
+        DMA_ClearFlag(ADC_BATT_DMA_STREAM, ADC_BATT_DMA_ALL_FLAGS);
+        adc_battery_reset_after_error();
+    }
 }
